@@ -5,25 +5,6 @@ from redis.client import bool_ok
 from redis._compat import (long, nativestr)
 from redis.exceptions import DataError
 
-'''
-class TSInfo(object):
-    chunkCount = None
-    labels = []
-    lastTimeStamp = None
-    maxSamplesPerChunk = None
-    retentionSecs = None
-    rules = []
-
-    def __init__(self, args):
-        self.chunkCount = args['chunkCount']
-        self.labels = list_to_dict(args['labels'])
-        self.lastTimeStamp = args['lastTimestamp']
-        self.maxSamplesPerChunk = args['maxSamplesPerChunk']
-        self.retentionSecs = args['retentionSecs']
-        self.rules = args['rules']
-'''
-
-
 class CMSInfo(object):
     width = None
     depth = None
@@ -317,8 +298,7 @@ class Client(Redis): #changed from StrictRedis
 
     def cfCreate(self, key, capacity):
         """
-        Creates a new Cuckoo Filter ``key`` with desired probability of false 
-        positives ``errorRate`` expected entries to be inserted as ``size``.
+        Creates a new Cuckoo Filter ``key`` an initial ``capacity`` items.
         """
         params = [key, capacity]
         
@@ -334,7 +314,7 @@ class Client(Redis): #changed from StrictRedis
 
     def cfAddNX(self, key, item):
         """
-        Adds an ``item`` to a Cuckoo Filter ``key`` if item does not yet exist.
+        Adds an ``item`` to a Cuckoo Filter ``key`` only if item does not yet exist.
         Command might be slower that ``cfAdd``.
         """
         params = [key, item]
@@ -343,7 +323,9 @@ class Client(Redis): #changed from StrictRedis
 
     def cfInsert(self, key, items, capacity=None, nocreate=None):
         """
-        Adds multiple ``items`` to a Cuckoo Filter ``key``.
+        Adds multiple ``items`` to a Cuckoo Filter ``key``, allowing the filter to be
+        created with a custom ``capacity` if it does not yet exist.
+        ``items`` must be provided as a list.
         """
         params = [key]
         self.appendCapacity(params, capacity)
@@ -355,7 +337,9 @@ class Client(Redis): #changed from StrictRedis
 
     def cfInsertNX(self, key, items, capacity=None, nocreate=None):
         """
-
+        Adds multiple ``items`` to a Cuckoo Filter ``key`` only if they do not exist yet,
+        allowing the filter to be created with a custom ``capacity` if it does not yet exist.
+        ``items`` must be provided as a list.
         """
         params = [key]
         self.appendCapacity(params, capacity)
@@ -383,7 +367,7 @@ class Client(Redis): #changed from StrictRedis
 
     def cfCount(self, key, item):
         """
-        Checks whether ``items`` exist in Cuckoo Filter ``key``.
+        Returns the number of times an ``item`` may be in the ``key``.
         """
         params = [key, item]
 
@@ -418,8 +402,8 @@ class Client(Redis): #changed from StrictRedis
 
     def cmsInitByDim(self, key, width, depth):
         """
-        Creates a new Cuckoo Filter ``key`` with desired probability of false 
-        positives ``errorRate`` expected entries to be inserted as ``size``.
+        Initializes a Count-Min Sketch ``key`` to dimensions
+        (``width``, ``depth``) specified by user.
         """
         params = [key, width, depth]
         
@@ -427,8 +411,8 @@ class Client(Redis): #changed from StrictRedis
 
     def cmsInitByProb(self, key, error, probability):
         """
-        Creates a new Cuckoo Filter ``key`` with desired probability of false 
-        positives ``errorRate`` expected entries to be inserted as ``size``.
+        Initializes a Count-Min Sketch ``key`` to characteristics
+        (``error``, ``probability``) specified by user.
         """
         params = [key, error, probability]
         
@@ -436,7 +420,9 @@ class Client(Redis): #changed from StrictRedis
 
     def cmsIncrBy(self, key, items, increments):
         """
-        Adds an ``item`` to a Cuckoo Filter ``key``.
+        Adds/increases ``items`` to a Count-Min Sketch ``key`` by ''increments''.
+        Both ``items`` and ``increments`` are lists.
+        Example - cmsIncrBy('A', ['foo'], [1])
         """
         params = [key]
         self.appendItemsAndIncrements(params, items, increments)
@@ -445,8 +431,8 @@ class Client(Redis): #changed from StrictRedis
 
     def cmsQuery(self, key, *items):
         """
-        Adds an ``item`` to a Cuckoo Filter ``key`` if item does not yet exist.
-        Command might be slower that ``cmsAdd``.
+        Returns count for an ``item`` from ``key``.
+        Multiple items can be queried with one call.
         """
         params = [key]
         params += items
@@ -455,7 +441,10 @@ class Client(Redis): #changed from StrictRedis
 
     def cmsMerge(self, destKey, numKeys, srcKeys, weights=[]):
         """
-        Adds multiple ``items`` to a Cuckoo Filter ``key``.
+        Merges ``numKeys`` of sketches into ``destKey``. Sketches specified in ``srcKeys``. 
+        All sketches must have identical width and depth.
+        ``Weights`` can be used to multiply certain sketches. Default weight is 1.
+        Both ``srcKeys`` and ``weights`` are lists.
         """
         params = [destKey, numKeys]
         params += srcKeys
@@ -465,7 +454,7 @@ class Client(Redis): #changed from StrictRedis
 
     def cmsInfo(self, key):
         """
-
+        Returns width, depth and total count of the sketch.
         """
 
         return self.execute_command(self.CMS_INFO, key)
@@ -485,7 +474,7 @@ class Client(Redis): #changed from StrictRedis
 
     def topkAdd(self, key, *items):
         """
-        Adds an ``item`` to a Cuckoo Filter ``key``.
+        Adds one ``item`` or more to a Cuckoo Filter ``key``.
         """
         params = [key]
         params += items
@@ -494,7 +483,7 @@ class Client(Redis): #changed from StrictRedis
 
     def topkQuery(self, key, *items):
         """
-        Checks whether an ``item`` is one of Top-K items at ``key``.
+        Checks whether one ``item`` or more is a Top-K item at ``key``.
         """
         params = [key]
         params += items
@@ -503,7 +492,7 @@ class Client(Redis): #changed from StrictRedis
 
     def topkCount(self, key, *items):
         """
-        Returns count for an ``item`` from ``key``. 
+        Returns count for one ``item`` or more from ``key``. 
         """
         params = [key]
         params += items
@@ -512,7 +501,7 @@ class Client(Redis): #changed from StrictRedis
 
     def topkList(self, key):
         """
-        Return full list of items in Top K list of ``key```.
+        Return full list of items in Top-K list of ``key```.
         """
         return self.execute_command(self.TOPK_LIST, key)
 
