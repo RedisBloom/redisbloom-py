@@ -1,2 +1,2 @@
-# rebloom-py
-Python client for Rebloom
+# redisbloom-py
+Python client for Redisbloom
