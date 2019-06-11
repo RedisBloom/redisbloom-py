@@ -78,7 +78,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            REDIS_PORT=6379 python test_commands.py
+            REDIS_PORT=6379 python RLTest -t rltest_commands.py --module ./../bloom/rebloom.so -s
 
       # no need for store_artifacts on nightly builds 
 
