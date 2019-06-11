@@ -34,12 +34,12 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
-      - run:
-          name: run tests
-          command: |
-          #  . venv/bin/activate
-           # REDIS_PORT=6379 coverage run test_commands.py
-            #codecov
+      # - run:
+      #     name: run tests
+      #     command: |
+      #       . venv/bin/activate
+      #       REDIS_PORT=6379 coverage run test_commands.py
+      #       codecov
             
       - store_artifacts:
           path: test-reports
