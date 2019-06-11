@@ -3,12 +3,17 @@ import unittest
 from time import sleep
 from unittest import TestCase
 from redisbloom.client import Client as RedisBloom
+from redis import ResponseError
 
 xrange = range
 rb = None
 port = 6379
 
 i = lambda l: [int(v) for v in l]
+
+# Can be used with assertRaises
+def run_func(func, *args, **kwargs): 
+    func(*args, **kwargs)
 
 class TestRedisBloom(TestCase):
     def setUp(self):
@@ -100,10 +105,12 @@ class TestRedisBloom(TestCase):
         self.assertEqual([1], rb.cfInsert('captest', ['foo']))
         self.assertEqual([1], rb.cfInsert('captest', ['foo'], capacity=1000))
         self.assertEqual([1], rb.cfInsertNX('captest', ['bar']))
+        self.assertEqual([1], rb.cfInsertNX('captest', ['food'], nocreate='1'))
         self.assertEqual([0, 0, 1], rb.cfInsertNX('captest', ['foo', 'bar', 'baz']))
         self.assertEqual([0], rb.cfInsertNX('captest', ['bar'], capacity=1000))
         self.assertEqual([1], rb.cfInsert('empty1', ['foo'], capacity=1000))
         self.assertEqual([1], rb.cfInsertNX('empty2', ['bar'], capacity=1000))
+        self.assertRaises(ResponseError, run_func(rb.cfInsert, 'noexist', ['foo']))
 
     def testCFExistsDel(self):
         self.assertTrue(rb.cfCreate('cuckoo', 1000))
