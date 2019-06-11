@@ -34,12 +34,12 @@ jobs:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
-      # - run:
-      #     name: run tests
-      #     command: |
-      #       . venv/bin/activate
-      #       REDIS_PORT=6379 coverage run test_commands.py
-      #       codecov
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            REDIS_PORT=6379 coverage run test_commands.py
+            codecov
             
       - store_artifacts:
           path: test-reports
@@ -68,9 +68,7 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
             pip install codecov
-            pip install git+https://github.com/RedisLabsModules/RLTest.git@master
-            pip install redis-py-cluster
-
+            
       - save_cache:
           paths:
             - ./venv
@@ -80,7 +78,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            REDIS_PORT=6379 python RLTest -t rltest_commands.py --module ./../bloom/rebloom.so -s
+            REDIS_PORT=6379 python test_commands.py
 
       # no need for store_artifacts on nightly builds 
 
