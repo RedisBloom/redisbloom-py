@@ -32,32 +32,6 @@ class TopKInfo(object):
 def spaceHolder(response):
     return response
 
-def list_to_dict(aList):
-    return {nativestr(aList[i][0]):nativestr(aList[i][1])
-                for i in range(len(aList))}
-
-def parse_range(response):
-    return [tuple((l[0], l[1].decode())) for l in response]
-
-def parse_m_range(response):
-    res = []
-    for item in response:
-        res.append({ nativestr(item[0]) : [list_to_dict(item[1]), 
-                                parse_range(item[2])]})
-    return res
-
-def parse_m_get(response):
-    res = []
-    for item in response:
-        res.append({ nativestr(item[0]) : [list_to_dict(item[1]), 
-                                item[2], nativestr(item[3])]})
-    return res
-
-def parse_info(response):
-    res = dict(zip(map(nativestr, response[::2]), response[1::2]))
-    info = TopKInfo(res)
-    return info   
-
 def parseToList(response):
     res = []
     for item in response:
