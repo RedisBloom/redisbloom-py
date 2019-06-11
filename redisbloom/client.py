@@ -152,7 +152,8 @@ class Client(Redis): #changed from StrictRedis
 
     @staticmethod
     def appendItems(params, items):
-        params.extend(['ITEMS', items])
+        params.extend(['ITEMS'])
+        params += items
 
     @staticmethod
     def appendError(params, error):
@@ -221,8 +222,7 @@ class Client(Redis): #changed from StrictRedis
         self.appendCapacity(params, capacity)
         self.appendError(params, error)
         self.appendNoCreate(params, noCreate)
-        params.extend(['ITEMS'])
-        params += items
+        self.appendItems(params, items)
 
         return self.execute_command(self.BF_INSERT, *params)
 
@@ -304,8 +304,7 @@ class Client(Redis): #changed from StrictRedis
         params = [key]
         self.appendCapacity(params, capacity)
         self.appendNoCreate(params, nocreate)
-        params.extend(['ITEMS'])
-        params += items
+        self.appendItems(params, items)
 
         return self.execute_command(self.CF_INSERT, *params)
 
@@ -318,8 +317,7 @@ class Client(Redis): #changed from StrictRedis
         params = [key]
         self.appendCapacity(params, capacity)
         self.appendNoCreate(params, nocreate)
-        params.extend(['ITEMS'])
-        params += items
+        self.appendItems(params, items)
 
         return self.execute_command(self.CF_INSERTNX, *params)
 
