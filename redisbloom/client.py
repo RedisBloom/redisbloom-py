@@ -35,7 +35,7 @@ def spaceHolder(response):
 def parseToList(response):
     res = []
     for item in response:
-        res.append(nativestr(item))
+        res.append(item)
     return res
 
 class Client(Redis): #changed from StrictRedis
@@ -89,21 +89,6 @@ class Client(Redis): #changed from StrictRedis
     TOPK_COUNT = 'TOPK.COUNT'
     TOPK_LIST = 'TOPK.LIST'
     TOPK_INFO = 'TOPK.INFO'
-
-
-    CREATE_CMD = 'TS.CREATE'
-    ALTER_CMD = 'TS.ALTER'
-    ADD_CMD = 'TS.ADD'
-    INCRBY_CMD = 'TS.INCRBY'
-    DECRBY_CMD = 'TS.DECRBY'
-    CREATERULE_CMD = 'TS.CREATERULE'
-    DELETERULE_CMD = 'TS.DELETERULE'
-    RANGE_CMD = 'TS.RANGE'
-    MRANGE_CMD = 'TS.MRANGE'
-    GET_CMD = 'TS.GET'
-    MGET_CMD = 'TS.MGET'
-    INFO_CMD = 'TS.INFO'
-    QUERYINDEX_CMD = 'TS.QUERYINDEX'
 
     def __init__(self, *args, **kwargs):
         """
