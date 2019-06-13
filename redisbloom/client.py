@@ -35,7 +35,7 @@ def spaceHolder(response):
 def parseToList(response):
     res = []
     for item in response:
-        res.append(nativestr(item))	
+        res.append(nativestr(item))
     return res
 
 class Client(Redis): #changed from StrictRedis
