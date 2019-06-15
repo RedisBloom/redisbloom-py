@@ -126,7 +126,7 @@ class Client(Redis): #changed from StrictRedis
             self.CMS_INFO : CMSInfo,
 
             self.TOPK_RESERVE : bool_ok,
-            self.TOPK_ADD : bool_ok,
+            self.TOPK_ADD : spaceHolder,
             self.TOPK_QUERY : spaceHolder,
             self.TOPK_COUNT : spaceHolder,
             self.TOPK_LIST : parseToList,
