@@ -120,6 +120,7 @@ class Client(Redis): #changed from StrictRedis
             #self.CF_COUNT : spaceHolder,
             #self.CF_SCANDUMP : spaceHolder,
             #self.CF_LOADDUMP : spaceHolder,
+
             
             self.CMS_INITBYDIM : bool_ok,
             self.CMS_INITBYPROB : bool_ok,
@@ -463,10 +464,13 @@ class Client(Redis): #changed from StrictRedis
         """
         Return full list of items in Top-K list of ``key```.
         """
+        
         return self.execute_command(self.TOPK_LIST, key)
 
     def topkInfo(self, key):
         """
         Returns k, width, depth and decay values of ``key``.
         """
+        
         return self.execute_command(self.TOPK_INFO, key)
+
