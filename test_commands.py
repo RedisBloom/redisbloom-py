@@ -154,10 +154,12 @@ class TestRedisBloom(TestCase):
     ################### Test Top-K ###################
     def testTopK(self):
         # test list with empty buckets
-        self.assertTrue(rb.topkReserve('topk', 10, 50, 3, 0.9))
-        self.assertTrue(rb.topkAdd('topk', 'A', 'B', 'C', 'D', 'E', 'A', 'A', 'B', 'C',
-                                                    'G', 'D', 'B', 'D', 'A', 'E', 'E'))
-        self.assertEqual([1, 1, 1, 1, 1, 0, 1],
+        self.assertTrue(rb.topkReserve('topk', 3, 50, 4, 0.9))
+        self.assertEqual([None, None, None, None, None, None, None, None,
+                          None, None, None, None, 'C', None, None, None, None], 
+                          rb.topkAdd('topk', 'A', 'B', 'C', 'D', 'E', 'A', 'A', 'B', 'C',
+                                                    'G', 'D', 'B', 'D', 'A', 'E', 'E', 1))
+        self.assertEqual([1, 1, 0, 1, 0, 0, 0],
                              rb.topkQuery('topk', 'A', 'B', 'C', 'D', 'E', 'F', 'G'))
         self.assertEqual([4, 3, 2, 3, 3, 0, 1],
                              rb.topkCount('topk', 'A', 'B', 'C', 'D', 'E', 'F', 'G'))                             

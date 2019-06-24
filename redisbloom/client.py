@@ -35,7 +35,10 @@ def spaceHolder(response):
 def parseToList(response):
     res = []
     for item in response:
-        res.append(nativestr(item))
+        if item is not None:
+            res.append(nativestr(item))
+        else:
+            res.append(None)
     return res
 
 class Client(Redis): #changed from StrictRedis
@@ -101,34 +104,35 @@ class Client(Redis): #changed from StrictRedis
             self.BF_RESERVE : bool_ok,
             #self.BF_ADD : spaceHolder,
             #self.BF_MADD : spaceHolder,
-            self.BF_INSERT : spaceHolder,
-            self.BF_EXISTS : spaceHolder,
-            self.BF_MEXISTS : spaceHolder,
-            self.BF_SCANDUMP : spaceHolder,
-            self.BF_LOADCHUNK : spaceHolder,
+            #self.BF_INSERT : spaceHolder,
+            #self.BF_EXISTS : spaceHolder,
+            #self.BF_MEXISTS : spaceHolder,
+            #self.BF_SCANDUMP : spaceHolder,
+            #self.BF_LOADCHUNK : spaceHolder,
 
             self.CF_RESERVE : bool_ok,
-            self.CF_ADD : spaceHolder,
-            self.CF_ADDNX : spaceHolder,
-            self.CF_INSERT : spaceHolder,
-            self.CF_INSERTNX : spaceHolder,
-            self.CF_EXISTS : spaceHolder,
-            self.CF_DEL : spaceHolder,
-            self.CF_COUNT : spaceHolder,
-            self.CF_SCANDUMP : spaceHolder,
-            self.CF_LOADDUMP : spaceHolder,
+            #self.CF_ADD : spaceHolder,
+            #self.CF_ADDNX : spaceHolder,
+            #self.CF_INSERT : spaceHolder,
+            #self.CF_INSERTNX : spaceHolder,
+            #self.CF_EXISTS : spaceHolder,
+            #self.CF_DEL : spaceHolder,
+            #self.CF_COUNT : spaceHolder,
+            #self.CF_SCANDUMP : spaceHolder,
+            #self.CF_LOADDUMP : spaceHolder,
+
             
             self.CMS_INITBYDIM : bool_ok,
             self.CMS_INITBYPROB : bool_ok,
             self.CMS_INCRBY : bool_ok,
-            self.CMS_QUERY : spaceHolder,
+            #self.CMS_QUERY : spaceHolder,
             self.CMS_MERGE : bool_ok,
             self.CMS_INFO : CMSInfo,
 
             self.TOPK_RESERVE : bool_ok,
-            self.TOPK_ADD : bool_ok,
-            self.TOPK_QUERY : spaceHolder,
-            self.TOPK_COUNT : spaceHolder,
+            self.TOPK_ADD : parseToList,
+            #self.TOPK_QUERY : spaceHolder,
+            #self.TOPK_COUNT : spaceHolder,
             self.TOPK_LIST : parseToList,
             self.TOPK_INFO : TopKInfo,
         }
@@ -460,10 +464,13 @@ class Client(Redis): #changed from StrictRedis
         """
         Return full list of items in Top-K list of ``key```.
         """
+        
         return self.execute_command(self.TOPK_LIST, key)
 
     def topkInfo(self, key):
         """
         Returns k, width, depth and decay values of ``key``.
         """
+        
         return self.execute_command(self.TOPK_INFO, key)
+
