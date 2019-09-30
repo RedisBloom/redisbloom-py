@@ -16,7 +16,7 @@ $ pip install redisbloom
 
 ```sql
 # Using Bloom Filter
-from redisbloom import Client
+from redisbloom.client import Client
 rb = Client()
 rb.bfCreate('bloom', 0.01, 1000)
 rb.bfAdd('bloom', 'foo')        # returns 1
@@ -25,7 +25,7 @@ rb.bfExists('bloom', 'foo')     # returns 1
 rb.bfExists('bloom', 'noexist') # returns 0
 
 # Using Cuckoo Filter
-from redisbloom import Client
+from redisbloom.client import Client
 rb = Client()
 rb.cfCreate('cuckoo', 1000)
 rb.cfAdd('cuckoo', 'filter')        # returns 1
@@ -33,16 +33,16 @@ rb.cfAddNX('cuckoo', 'filter')      # returns 0
 rb.cfExists('cuckoo', 'filter')     # returns 1
 rb.cfExists('cuckoo', 'noexist')    # returns 0
 
-# Using Cuckoo Filter
-from redisbloom import Client
+# Using Count-Min Sketch
+from redisbloom.client import Client
 rb = Client()
 rb.cmsInitByDim('dim', 1000, 5)
 rb.cmsIncrBy('dim', ['foo'], [5])
 rb.cmsIncrBy('dim', ['foo', 'bar'], [5, 15])
 rb.cmsQuery('dim', 'foo', 'bar')    # returns [10, 15]
 
-# Using Cuckoo Filter
-from redisbloom import Client
+# Using Top-K
+from redisbloom.client import Client
 rb = Client()
 rb.topkReserve('topk', 3, 20, 3, 0.9)
 rb.topkAdd('topk', 'A', 'B', 'C', 'D', 'E', 'A', 'A', 'B', 
