@@ -14,7 +14,7 @@ $ pip install redisbloom
 
 ### Usage example
 
-```sql
+```python
 # Using Bloom Filter
 from redisbloom.client import Client
 rb = Client()
