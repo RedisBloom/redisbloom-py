@@ -120,7 +120,52 @@ class TestRedisBloom(TestCase):
         self.assertEqual(1, rb.cfCount('cuckoo', 'filter'))        
         self.assertEqual(0, rb.cfCount('cuckoo', 'notexist'))        
         self.assertTrue(rb.cfDel('cuckoo', 'filter'))
-        self.assertEqual(0, rb.cfCount('cuckoo', 'filter'))        
+        self.assertEqual(0, rb.cfCount('cuckoo', 'filter'))     
+
+    def test_CF_reserve_expansion(self):
+        test_size = 1024
+        filter_size = 256
+        exp_list = ['cf_exp1', 'cf_exp2', 'cf_exp4']
+
+        for i in range(len(exp_list)):
+            self.assertTrue(rb.cfCreate(exp_list[i], filter_size, expansion=pow(2, i)))
+            for j in range(test_size):
+                self.assertTrue(rb.cfAdd(exp_list[i], str(j)))
+        
+        for i in range(len(exp_list)):
+            error_count = 0
+            for j in range(test_size):
+                self.assertTrue(rb.cfExists(exp_list[i], str(j)))
+
+    def test_CF_reserve_bucket_size(self):
+        test_size = 1024
+        filter_size = 256
+        exp_list = ['cf_bs1', 'cf_bs2', 'cf_bs4']
+
+        for i in range(len(exp_list)):
+            self.assertTrue(rb.cfCreate(exp_list[i], filter_size, bucket_size=pow(2, i)))
+            for j in range(test_size):
+                self.assertTrue(rb.cfAdd(exp_list[i], str(j)))
+        
+        for i in range(len(exp_list)):
+            error_count = 0
+            for j in range(test_size):
+                self.assertTrue(rb.cfExists(exp_list[i], str(j)))
+
+    def test_CF_reserve_max_iteration(self):
+        test_size = 1024 
+        max_list = [25, 100, 500]
+        exp_list = ['cf_mi25', 'cf_mi100', 'cf_mi500']
+
+        for i in range(len(exp_list)):
+            self.assertTrue(rb.cfCreate(exp_list[i], test_size, max_list[i]))
+            for j in range(test_size):
+                self.assertTrue(rb.cfAdd(exp_list[i], str(j)))
+        
+        for i in range(len(exp_list)):
+            error_count = 0
+            for j in range(test_size):
+                self.assertTrue(rb.cfExists(exp_list[i], str(j)))
 
     ################### Test Count-Min Sketch ###################
     def testCMS(self):

@@ -161,10 +161,25 @@ class Client(Redis): #changed from StrictRedis
             params += weights
 
     @staticmethod
-    def appendNoCreate(params, noCreate):
-        if noCreate is not None:
+    def appendNoCreate(params, no_create):
+        if no_create is not None:
             params.extend(['NOCREATE'])
 
+    @staticmethod
+    def appendMaxIterations(params, max_iterations):
+        if max_iterations is not None:
+            params.extend(['MAXITERATIONS', max_iterations])
+
+    @staticmethod
+    def appendBucketSize(params, bucket_size):
+        if bucket_size is not None:
+            params.extend(['BUCKETSIZE', bucket_size])
+
+    @staticmethod
+    def appendExpansion(params, expansion):
+        if expansion is not None:
+            params.extend(['EXPANSION', expansion])
+            
     @staticmethod
     def appendItemsAndIncrements(params, items, increments):
         for i in range(len(items)):
@@ -259,12 +274,15 @@ class Client(Redis): #changed from StrictRedis
 
 ################## Cuckoo Filter Functions ######################
 
-    def cfCreate(self, key, capacity):
+    def cfCreate(self, key, capacity, expansion=None, bucket_size=None, max_iterations=None):
         """
         Creates a new Cuckoo Filter ``key`` an initial ``capacity`` items.
         """
         params = [key, capacity]
-        
+        self.appendExpansion(params, expansion)
+        self.appendBucketSize(params, bucket_size)
+        self.appendMaxIterations(params, max_iterations)
+
         return self.execute_command(self.CF_RESERVE, *params)
         
     def cfAdd(self, key, item):
