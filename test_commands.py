@@ -129,7 +129,7 @@ class TestRedisBloom(TestCase):
         self.assertTrue(rb.cmsIncrBy('dim', ['foo'], [5]))
         self.assertEqual([0], rb.cmsQuery('dim', 'notexist'))        
         self.assertEqual([5], rb.cmsQuery('dim', 'foo'))        
-        self.assertTrue(rb.cmsIncrBy('dim', ['foo', 'bar'], [5, 15]))
+        self.assertEqual([10, 15], rb.cmsIncrBy('dim', ['foo', 'bar'], [5, 15]))
         self.assertEqual([10, 15], rb.cmsQuery('dim', 'foo', 'bar'))   
         info = rb.cmsInfo('dim')
         self.assertEqual(1000, info.width)     

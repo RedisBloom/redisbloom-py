@@ -124,7 +124,7 @@ class Client(Redis): #changed from StrictRedis
             
             self.CMS_INITBYDIM : bool_ok,
             self.CMS_INITBYPROB : bool_ok,
-            self.CMS_INCRBY : bool_ok,
+            #self.CMS_INCRBY : spaceHolder,
             #self.CMS_QUERY : spaceHolder,
             self.CMS_MERGE : bool_ok,
             self.CMS_INFO : CMSInfo,
