@@ -24,7 +24,12 @@ class TestRedisBloom(TestCase):
     def testCreate(self):
         '''Test CREATE/RESERVE calls'''
         self.assertTrue(rb.bfCreate('bloom', 0.01, 1000))
+        self.assertTrue(rb.bfCreate('bloom_e', 0.01, 1000, expansion=1))
+        self.assertTrue(rb.bfCreate('bloom_ns', 0.01, 1000, noScale=True))
         self.assertTrue(rb.cfCreate('cuckoo', 1000))
+        self.assertTrue(rb.cfCreate('cuckoo_e', 1000, expansion=1))
+        self.assertTrue(rb.cfCreate('cuckoo_bs', 1000, bucket_size=4))
+        self.assertTrue(rb.cfCreate('cuckoo_mi', 1000, max_iterations=10))
         self.assertTrue(rb.cmsInitByDim('cmsDim', 100, 5))
         self.assertTrue(rb.cmsInitByProb('cmsProb', 0.01, 0.01))
         self.assertTrue(rb.topkReserve('topk', 5, 100, 5, 0.9))
