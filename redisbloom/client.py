@@ -124,7 +124,7 @@ class Client(Redis): #changed from StrictRedis
             
             self.CMS_INITBYDIM : bool_ok,
             self.CMS_INITBYPROB : bool_ok,
-            self.CMS_INCRBY : bool_ok,
+            #self.CMS_INCRBY : spaceHolder,
             #self.CMS_QUERY : spaceHolder,
             self.CMS_MERGE : bool_ok,
             self.CMS_INFO : CMSInfo,
@@ -155,6 +155,16 @@ class Client(Redis): #changed from StrictRedis
             params.extend(['CAPACITY', capacity])
 
     @staticmethod
+    def appendExpansion(params, expansion):
+        if expansion is not None:
+            params.extend(['EXPANSION', expansion])
+
+    @staticmethod
+    def appendNoScale(params, noScale):
+        if noScale is not None:
+            params.extend(['NONSCALING'])
+
+    @staticmethod
     def appendWeights(params, weights):
         if len(weights) > 0:
             params.append('WEIGHTS')
@@ -170,17 +180,30 @@ class Client(Redis): #changed from StrictRedis
         for i in range(len(items)):
             params.append(items[i])
             params.append(increments[i])
-            
+
+    @staticmethod
+    def appendMaxIterations(params, max_iterations):
+        if max_iterations is not None:
+            params.extend(['MAXITERATIONS', max_iterations])
+
+    @staticmethod
+    def appendBucketSize(params, bucket_size):
+        if bucket_size is not None:
+            params.extend(['BUCKETSIZE', bucket_size])
 
 ################## Bloom Filter Functions ######################
 
-    def bfCreate(self, key, errorRate, capacity):
+    def bfCreate(self, key, errorRate, capacity, expansion=None, noScale=None):
         """
         Creates a new Bloom Filter ``key`` with desired probability of false 
         positives ``errorRate`` expected entries to be inserted as ``capacity``.
+        Default expansion value is 2.
+        By default, filter is auto-scaling.
         """
         params = [key, errorRate, capacity]
-        
+        self.appendExpansion(params, expansion)
+        self.appendNoScale(params, noScale)
+
         return self.execute_command(self.BF_RESERVE, *params)
         
     def bfAdd(self, key, item):
@@ -200,7 +223,7 @@ class Client(Redis): #changed from StrictRedis
 
         return self.execute_command(self.BF_MADD, *params)
 
-    def bfInsert(self, key, items, capacity=None, error=None, noCreate=None, ):
+    def bfInsert(self, key, items, capacity=None, error=None, noCreate=None, expansion=None, noScale=None):
         """
         Adds to a Bloom Filter ``key`` multiple ``items``. If ``nocreate``
         remain ``None`` and ``key does not exist, a new Bloom Filter ``key`` 
@@ -212,6 +235,8 @@ class Client(Redis): #changed from StrictRedis
         self.appendError(params, error)
         self.appendNoCreate(params, noCreate)
         self.appendItems(params, items)
+        self.appendExpansion(params, expansion)
+        self.appendNoScale(params, noScale)
 
         return self.execute_command(self.BF_INSERT, *params)
 
@@ -259,12 +284,15 @@ class Client(Redis): #changed from StrictRedis
 
 ################## Cuckoo Filter Functions ######################
 
-    def cfCreate(self, key, capacity):
+    def cfCreate(self, key, capacity, expansion=None, bucket_size=None, max_iterations=None):
         """
         Creates a new Cuckoo Filter ``key`` an initial ``capacity`` items.
         """
         params = [key, capacity]
-        
+        self.appendExpansion(params, expansion)
+        self.appendBucketSize(params, bucket_size)
+        self.appendMaxIterations(params, max_iterations)
+
         return self.execute_command(self.CF_RESERVE, *params)
         
     def cfAdd(self, key, item):
