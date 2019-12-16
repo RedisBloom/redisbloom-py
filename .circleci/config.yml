@@ -33,6 +33,10 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
+          
+      - run:
+          name: test dist
+          command: python setup.py sdist
 
       - run:
           name: run tests
@@ -73,10 +77,6 @@ jobs:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-          
-      - run:
-          name: test dist
-          command: python setup.py sdist
 
       - run:
           name: run tests
