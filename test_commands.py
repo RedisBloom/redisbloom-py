@@ -180,5 +180,22 @@ class TestRedisBloom(TestCase):
         self.assertEqual(3, info.depth)  
         self.assertAlmostEqual(0.9, float(info.decay))  
 
+    def test_pipeline(self):
+        pipeline = rb.pipeline()
+        
+        self.assertFalse(rb.execute_command('get pipeline'))
+
+        self.assertTrue(rb.bfCreate('pipeline', 0.01, 1000))
+        for i in range(100):
+            pipeline.bfAdd('pipeline', i)
+        for i in range(100):
+            self.assertFalse(rb.bfExists('pipeline', i))
+
+        pipeline.execute()
+
+        for i in range(100):
+            self.assertTrue(rb.bfExists('pipeline', i))
+        
+
 if __name__ == '__main__':
     unittest.main()
