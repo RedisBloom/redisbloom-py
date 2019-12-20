@@ -23,7 +23,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Database'
     ],
-    keywords='Redis Graph Extension',
+    keywords='Redis Extension Probabilistic TopK Cuckoo-Filter Bloom-Filter Count-min-sketch',
     author='RedisLabs',
     author_email='oss@redislabs.com'
 )
