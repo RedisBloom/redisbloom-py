@@ -10,7 +10,7 @@ requirements = map(str.strip, open("requirements.txt").readlines())
 
 setup(
     name='redisbloom',
-    version='0.3.0',
+    version='0.3.1',
     description='RedisBloom Python Client',
     long_description=read_all("README.md"),
     long_description_content_type='text/markdown',
