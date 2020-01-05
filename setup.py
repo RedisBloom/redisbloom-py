@@ -6,11 +6,11 @@ def read_all(f):
     with io.open(f, encoding="utf-8") as I:
         return I.read()
 
-requirements = map(str.strip, open("requirements.txt").readlines())    
+requirements = list(map(str.strip, open("requirements.txt").readlines()))
 
 setup(
     name='redisbloom',
-    version='0.3.1',
+    version='0.3.2',
     description='RedisBloom Python Client',
     long_description=read_all("README.md"),
     long_description_content_type='text/markdown',
