@@ -55,11 +55,6 @@ class Client(Redis): #changed from StrictRedis
     - TopK for TopK Data Structure
     """
 
-    MODULE_INFO = {
-        'name': 'RedisBloom',
-        'ver':  '0.1.0'
-    }
-
     BF_RESERVE = 'BF.RESERVE'
     BF_ADD = 'BF.ADD'
     BF_MADD = 'BF.MADD'
