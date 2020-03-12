@@ -1,10 +1,10 @@
 import six
-import redis
-from redis import Redis, RedisError 
-from redis.client import Pipeline
-from redis.client import bool_ok
-from redis._compat import (long, nativestr)
+from redis.client import Redis, Pipeline
+from redis._compat import nativestr
 from redis.exceptions import DataError
+
+def bool_ok(response):
+    return nativestr(response) == 'OK'
 
 class CMSInfo(object):
     width = None
