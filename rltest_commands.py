@@ -2,7 +2,6 @@
 #           RLTest -t rltest_commands.py --module <directory>/rebloom.so -s
 
 from RLTest import Env
-import time
 from redisbloom.client import Client as RedisBloom
 from redis import ResponseError
 
@@ -69,7 +68,7 @@ class TestRedisBloom():
         # certain to not break anything
         def do_verify():
             res = 0
-            for x in xrange(1000):
+            for x in range(1000):
                 rb.bfAdd('myBloom', x)
                 rv = rb.bfExists('myBloom', x)
                 self.env.assertTrue(rv)
