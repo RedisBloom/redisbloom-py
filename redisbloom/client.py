@@ -6,6 +6,42 @@ from redis.exceptions import DataError
 def bool_ok(response):
     return nativestr(response) == 'OK'
 
+class BFInfo(object):
+    capacity = None
+    size = None
+    filterNum = None
+    insertedNum = None
+    expansionRate = None
+
+    def __init__(self, args):
+        response = dict(zip(map(nativestr, args[::2]), args[1::2]))
+        self.capacity = response['Capacity']
+        self.size = response['Size']
+        self.filterNum = response['Number of filters']
+        self.insertedNum = response['Number of items inserted']
+        self.expansionRate = response['Expansion rate']
+
+class CFInfo(object):
+    size = None
+    bucketNum = None
+    filterNum = None
+    insertedNum = None
+    deletedNum = None
+    bucketSize = None
+    expansionRate = None
+    maxIteration = None
+
+    def __init__(self, args):
+        response = dict(zip(map(nativestr, args[::2]), args[1::2]))
+        self.size = response['Size']
+        self.bucketNum = response['Number of buckets']
+        self.filterNum = response['Number of filters']
+        self.insertedNum = response['Number of items inserted']
+        self.deletedNum = response['Number of items deleted']
+        self.bucketSize = response['Bucket size']
+        self.expansionRate = response['Expansion rate']
+        self.maxIteration = response['Max iterations']
+
 class CMSInfo(object):
     width = None
     depth = None
@@ -63,6 +99,7 @@ class Client(Redis): #changed from StrictRedis
     BF_MEXISTS = 'BF.MEXISTS'
     BF_SCANDUMP = 'BF.SCANDUMP'
     BF_LOADCHUNK = 'BF.LOADCHUNK'
+    BF_INFO = 'BF.INFO'
 
     CF_RESERVE = 'CF.RESERVE'
     CF_ADD = 'CF.ADD'
@@ -74,6 +111,7 @@ class Client(Redis): #changed from StrictRedis
     CF_COUNT = 'CF.COUNT'
     CF_SCANDUMP = 'CF.SCANDUMP'
     CF_LOADDUMP = 'CF.LOADDUMP'
+    CF_INFO = 'CF.INFO'
     
     CMS_INITBYDIM = 'CMS.INITBYDIM'
     CMS_INITBYPROB = 'CMS.INITBYPROB'
@@ -105,6 +143,7 @@ class Client(Redis): #changed from StrictRedis
             #self.BF_MEXISTS : spaceHolder,
             #self.BF_SCANDUMP : spaceHolder,
             #self.BF_LOADCHUNK : spaceHolder,
+            self.BF_INFO : BFInfo,
 
             self.CF_RESERVE : bool_ok,
             #self.CF_ADD : spaceHolder,
@@ -116,6 +155,7 @@ class Client(Redis): #changed from StrictRedis
             #self.CF_COUNT : spaceHolder,
             #self.CF_SCANDUMP : spaceHolder,
             #self.CF_LOADDUMP : spaceHolder,
+            self.CF_INFO : CFInfo,
 
             
             self.CMS_INITBYDIM : bool_ok,
@@ -276,6 +316,13 @@ class Client(Redis): #changed from StrictRedis
         
         return self.execute_command(self.BF_LOADCHUNK, *params)
 
+    def bfInfo(self, key):
+        """
+        Returns capacity, size, number of filters, number of items inserted, and expansion rate.
+        """
+
+        return self.execute_command(self.BF_INFO, key)
+
 
 ################## Cuckoo Filter Functions ######################
 
@@ -381,6 +428,13 @@ class Client(Redis): #changed from StrictRedis
         
         return self.execute_command(self.CF_LOADDUMP, *params)
 
+    def cfInfo(self, key):
+        """
+        Returns size, number of buckets, number of filter, number of items inserted, number of items deleted,
+        bucket size, expansion rate, and max iteration.
+        """
+
+        return self.execute_command(self.CF_INFO, key)
 
 ################## Count-Min Sketch Functions ######################
 

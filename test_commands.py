@@ -55,6 +55,10 @@ class TestRedisBloom(TestCase):
         self.assertEqual(1, rb.bfExists('bloom', 'foo'))
         self.assertEqual(0, rb.bfExists('bloom', 'noexist'))
         self.assertEqual([1, 0], i(rb.bfMExists('bloom', 'foo', 'noexist')))
+        info = rb.bfInfo('bloom')
+        self.assertEqual(2, info.insertedNum)
+        self.assertEqual(1000, info.capacity)
+        self.assertEqual(1, info.filterNum)
 
     def testBFDumpLoad(self):
         # Store a filter
@@ -116,6 +120,10 @@ class TestRedisBloom(TestCase):
         self.assertEqual([1], rb.cfInsert('empty1', ['foo'], capacity=1000))
         self.assertEqual([1], rb.cfInsertNX('empty2', ['bar'], capacity=1000))
         self.assertRaises(ResponseError, run_func(rb.cfInsert, 'noexist', ['foo']))
+        info = rb.cfInfo('captest')
+        self.assertEqual(5, info.insertedNum)
+        self.assertEqual(0, info.deletedNum)
+        self.assertEqual(1, info.filterNum)
 
     def testCFExistsDel(self):
         self.assertTrue(rb.cfCreate('cuckoo', 1000))
@@ -137,7 +145,7 @@ class TestRedisBloom(TestCase):
         self.assertEqual([10, 15], rb.cmsIncrBy('dim', ['foo', 'bar'], [5, 15]))
         self.assertEqual([10, 15], rb.cmsQuery('dim', 'foo', 'bar'))   
         info = rb.cmsInfo('dim')
-        self.assertEqual(1000, info.width)     
+        self.assertEqual(1000, info.width)
         self.assertEqual(5, info.depth)     
         self.assertEqual(25, info.count)  
 
