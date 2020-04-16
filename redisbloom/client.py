@@ -110,7 +110,7 @@ class Client(Redis): #changed from StrictRedis
     CF_DEL = 'CF.DEL'
     CF_COUNT = 'CF.COUNT'
     CF_SCANDUMP = 'CF.SCANDUMP'
-    CF_LOADDUMP = 'CF.LOADDUMP'
+    CF_LOADCHUNK = 'CF.LOADCHUNK'
     CF_INFO = 'CF.INFO'
     
     CMS_INITBYDIM = 'CMS.INITBYDIM'
@@ -154,7 +154,7 @@ class Client(Redis): #changed from StrictRedis
             #self.CF_DEL : spaceHolder,
             #self.CF_COUNT : spaceHolder,
             #self.CF_SCANDUMP : spaceHolder,
-            #self.CF_LOADDUMP : spaceHolder,
+            #self.CF_LOADCHUNK : spaceHolder,
             self.CF_INFO : CFInfo,
 
             
@@ -426,7 +426,7 @@ class Client(Redis): #changed from StrictRedis
         """
         params = [key, iter, data]
         
-        return self.execute_command(self.CF_LOADDUMP, *params)
+        return self.execute_command(self.CF_LOADCHUNK, *params)
 
     def cfInfo(self, key):
         """
