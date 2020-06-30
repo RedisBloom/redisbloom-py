@@ -268,10 +268,10 @@ class Client(Redis): #changed from StrictRedis
         params = [key]
         self.appendCapacity(params, capacity)
         self.appendError(params, error)
-        self.appendNoCreate(params, noCreate)
-        self.appendItems(params, items)
         self.appendExpansion(params, expansion)
+        self.appendNoCreate(params, noCreate)
         self.appendNoScale(params, noScale)
+        self.appendItems(params, items)
 
         return self.execute_command(self.BF_INSERT, *params)
 
