@@ -104,6 +104,24 @@ class TestRedisBloom(TestCase):
         rb.execute_command('del', 'myBloom')
         rb.bfCreate('myBloom', '0.0001', '10000000')
 
+    def testBFInfo(self):
+        expansion = 4
+        # Store a filter
+        rb.bfCreate('nonscaling', '0.0001', '1000', noScale=True)
+        info = rb.bfInfo('nonscaling')
+        self.assertEqual(info.expansionRate, None)
+
+        rb.bfCreate('expanding', '0.0001', '1000', expansion=expansion)
+        info = rb.bfInfo('expanding')
+        self.assertEqual(info.expansionRate, 4)
+
+        try:
+            # noScale mean no expansion
+            rb.bfCreate('myBloom', '0.0001', '1000', expansion=expansion, noScale=True)
+            self.assertTrue(False)
+        except: 
+            self.assertTrue(True)
+
     ################### Test Cuckoo Filter ###################
     def testCFAddInsert(self):
         self.assertTrue(rb.cfCreate('cuckoo', 1000))
