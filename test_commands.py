@@ -3,7 +3,6 @@ import unittest
 from time import sleep
 from unittest import TestCase
 from redisbloom.client import Client as RedisBloom
-from redis import ResponseError
 
 xrange = range
 rb = None
@@ -119,7 +118,6 @@ class TestRedisBloom(TestCase):
         self.assertEqual([0], rb.cfInsertNX('captest', ['bar'], capacity=1000))
         self.assertEqual([1], rb.cfInsert('empty1', ['foo'], capacity=1000))
         self.assertEqual([1], rb.cfInsertNX('empty2', ['bar'], capacity=1000))
-        self.assertRaises(ResponseError, run_func(rb.cfInsert, 'noexist', ['foo']))
         info = rb.cfInfo('captest')
         self.assertEqual(5, info.insertedNum)
         self.assertEqual(0, info.deletedNum)
@@ -203,7 +201,6 @@ class TestRedisBloom(TestCase):
 
         for i in range(100):
             self.assertTrue(rb.bfExists('pipeline', i))
-        
 
 if __name__ == '__main__':
     unittest.main()

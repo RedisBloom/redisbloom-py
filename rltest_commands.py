@@ -3,7 +3,6 @@
 
 from RLTest import Env
 from redisbloom.client import Client as RedisBloom
-from redis import ResponseError
 
 '''
 from time import sleep

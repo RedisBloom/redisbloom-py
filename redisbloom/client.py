@@ -1,7 +1,6 @@
 import six
 from redis.client import Redis, Pipeline
 from redis._compat import nativestr
-from redis.exceptions import DataError
 
 def bool_ok(response):
     return nativestr(response) == 'OK'
@@ -569,3 +568,12 @@ class Client(Redis): #changed from StrictRedis
 
 class Pipeline(Pipeline, Client):
     "Pipeline for RedisBloom Client"
+    def __init__(self, connection_pool, response_callbacks, transaction, shard_hint):
+        self.connection_pool = connection_pool
+        self.connection = None
+        self.response_callbacks = response_callbacks
+        self.transaction = transaction
+        self.shard_hint = shard_hint
+
+        self.watching = False
+        self.reset()
