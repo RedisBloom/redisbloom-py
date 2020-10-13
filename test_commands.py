@@ -3,7 +3,6 @@ import unittest
 from time import sleep
 from unittest import TestCase
 from redisbloom.client import Client as RedisBloom
-from redis import ResponseError
 
 xrange = range
 rb = None
@@ -105,6 +104,24 @@ class TestRedisBloom(TestCase):
         rb.execute_command('del', 'myBloom')
         rb.bfCreate('myBloom', '0.0001', '10000000')
 
+    def testBFInfo(self):
+        expansion = 4
+        # Store a filter
+        rb.bfCreate('nonscaling', '0.0001', '1000', noScale=True)
+        info = rb.bfInfo('nonscaling')
+        self.assertEqual(info.expansionRate, None)
+
+        rb.bfCreate('expanding', '0.0001', '1000', expansion=expansion)
+        info = rb.bfInfo('expanding')
+        self.assertEqual(info.expansionRate, 4)
+
+        try:
+            # noScale mean no expansion
+            rb.bfCreate('myBloom', '0.0001', '1000', expansion=expansion, noScale=True)
+            self.assertTrue(False)
+        except: 
+            self.assertTrue(True)
+
     ################### Test Cuckoo Filter ###################
     def testCFAddInsert(self):
         self.assertTrue(rb.cfCreate('cuckoo', 1000))
@@ -119,7 +136,6 @@ class TestRedisBloom(TestCase):
         self.assertEqual([0], rb.cfInsertNX('captest', ['bar'], capacity=1000))
         self.assertEqual([1], rb.cfInsert('empty1', ['foo'], capacity=1000))
         self.assertEqual([1], rb.cfInsertNX('empty2', ['bar'], capacity=1000))
-        self.assertRaises(ResponseError, run_func(rb.cfInsert, 'noexist', ['foo']))
         info = rb.cfInfo('captest')
         self.assertEqual(5, info.insertedNum)
         self.assertEqual(0, info.deletedNum)
@@ -203,7 +219,6 @@ class TestRedisBloom(TestCase):
 
         for i in range(100):
             self.assertTrue(rb.bfExists('pipeline', i))
-        
 
 if __name__ == '__main__':
     unittest.main()
