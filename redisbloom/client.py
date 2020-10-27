@@ -569,6 +569,7 @@ class Client(Redis): #changed from StrictRedis
 class Pipeline(Pipeline, Client):
     "Pipeline for RedisBloom Client"
     def __init__(self, connection_pool, response_callbacks, transaction, shard_hint):
+        super(Pipeline, self).__init__()
         self.connection_pool = connection_pool
         self.connection = None
         self.response_callbacks = response_callbacks
