@@ -10,7 +10,7 @@ jobs:
       python_version:
         type: string
     docker:
-      - image: circleci/python:{{python_version}}
+      - image: circleci/python:<<parameters.python_version>>
       - image: redislabs/rebloom:edge
 
     working_directory: ~/repo
