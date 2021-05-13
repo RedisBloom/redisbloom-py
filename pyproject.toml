@@ -5,8 +5,15 @@ description = "RedisBloom Python Client"
 authors = ["RedisLabs <oss@redislabs.com>"]
 license = "BSD-3-Clause"
 readme = "README.md"
-packages = [
-    { include = 'redisbloom' },
+
+classifiers = [
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: BSD License',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Topic :: Database'
 ]
 
 [tool.poetry.dependencies]
@@ -15,13 +22,6 @@ hiredis = "^2.0.0"
 redis = "^3.5.3"
 rmtest = "^0.7.0"
 six = "^1.16.0"
-
-classifiers=[
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: BSD License',
-    'Programming Language :: Python :: 2.7',
-    'Topic :: Database'
-]
 
 keywords = 'Redis Extension Probabilistic TopK Cuckoo-Filter Bloom-Filter Count-min-sketch'
 
