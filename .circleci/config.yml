@@ -27,7 +27,7 @@ jobs:
       - run:
           name: install tox dependencies
           command: |
-            pip install --user -r requirements.txt
+            pip install --user --quiet -r requirements.txt
 
 #      - save_cache:
 #          paths:
@@ -35,16 +35,14 @@ jobs:
 #          key: v1-dependencies-{{ checksum "pyproject.toml" }}
 
       - run:
-          name: build sdist
-          command: poetry build --format sdist
-
-      - run:
-          name: build wheel
-          command: poetry build --format wheel
+          name: build
+          command: |
+            poetry build --format sdist
+            poetry build --format wheel
 
       - run:
           name: run tests
-          command: |
+          command:
             tox
 
       - store_artifacts:
