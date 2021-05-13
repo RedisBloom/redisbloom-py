@@ -6,6 +6,10 @@ authors = ["RedisLabs <oss@redislabs.com>"]
 license = "BSD-3-Clause"
 readme = "README.md"
 
+packages = [
+    { include = 'redisbloom' },
+]
+
 classifiers = [
     'Intended Audience :: Developers',
     'License :: OSI Approved :: BSD License',
