@@ -3,11 +3,14 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
+version: 2.1
 jobs:
   build:
+    parameters:
+      python_version:
+        type: string
     docker:
-      - image: circleci/python:3.7.1
+      - image: circleci/python:{{python_version}}
       - image: redislabs/rebloom:edge
 
     working_directory: ~/repo
@@ -15,36 +18,35 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache: # Download and cache dependencies
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+#      - restore_cache: # Download and cache dependencies
+#          keys:
+#          - v1-dependencies-{{ checksum "pyproject.toml" }}
+#          # fallback to using the latest cache if no exact match is found
+#          - v1-dependencies-
+#
+      - run:
+          name: install tox dependencies
+          command: |
+            pip install -r requirements.txt
+
+#      - save_cache:
+#          paths:
+#            - ./venv
+#          key: v1-dependencies-{{ checksum "pyproject.toml" }}
 
       - run:
-          name: install dependencies
-          command: |
-            virtualenv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-            pip install codecov
-            
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-          
+          name: build sdist
+          command: poetry build --format sdist
+
       - run:
-          name: test dist
-          command: python setup.py sdist
+          name: build wheel
+          command: poetry build --format wheel
 
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
-            REDIS_PORT=6379 coverage run test_commands.py
-            codecov
-            
+            tox
+
       - store_artifacts:
           path: test-reports
           destination: test-reports
@@ -72,7 +74,7 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
             pip install codecov
-            
+
       - save_cache:
           paths:
             - ./venv
@@ -84,13 +86,28 @@ jobs:
             . venv/bin/activate
             REDIS_PORT=6379 python test_commands.py
 
-      # no need for store_artifacts on nightly builds 
+on-any-branch: &on-any-branch
+  filters:
+    branches:
+      only:
+        - /.*/
+    tags:
+      ignore: /.*/
 
 workflows:
   version: 2
-  commit:
+  ci:
     jobs:
-      - build
+      - build:
+          <<: *on-any-branch
+          matrix:
+            parameters:
+              python_version:
+                - "3.6.9"
+                - "3,7.9"
+                - "3,8.9"
+                - "3,9.4"
+
   nightly:
     triggers:
       - schedule:
