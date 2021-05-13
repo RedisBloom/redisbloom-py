@@ -27,7 +27,7 @@ jobs:
       - run:
           name: install tox dependencies
           command: |
-            pip install -r requirements.txt
+            pip install --user -r requirements.txt
 
 #      - save_cache:
 #          paths:
@@ -104,9 +104,9 @@ workflows:
             parameters:
               python_version:
                 - "3.6.9"
-                - "3,7.9"
-                - "3,8.9"
-                - "3,9.4"
+                - "3.7.9"
+                - "3.8.9"
+                - "3.9.4"
 
   nightly:
     triggers:
