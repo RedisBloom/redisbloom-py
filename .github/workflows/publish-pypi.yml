@@ -9,18 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Set up Python 2.7
+      - name: Set up Python 3.6
         uses: actions/setup-python@v1
         with:
-          python-version: 2.7
+          python-version: 3.6
 
-      - name: Install twine
+      - name: Install twine and wheel
         run: |
-            pip install twine
-
-      - name: Install wheel
-        run: |
-            pip install wheel
+            pip install twine wheel
 
       - name: Create a source distribution
         run: |
@@ -38,6 +34,8 @@ jobs:
             echo -e "[testpypi]" >> ~/.pypirc
             echo -e "username = __token__" >> ~/.pypirc
             echo -e "password = ${{ secrets.TESTPYPI_TOKEN }}" >> ~/.pypirc
+            chmod 0600 ~/.pypirc
+
 
       - name: Publish to Test PyPI
         if: github.event_name == 'release'
