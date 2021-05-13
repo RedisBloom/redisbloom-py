@@ -10,7 +10,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "3.6"
+python = "^3.6"
 hiredis = "^2.0.0"
 redis = "^3.5.3"
 rmtest = "^0.7.0"
