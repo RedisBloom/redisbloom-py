@@ -4,18 +4,47 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2.1
-jobs:
-  build:
-    parameters:
-      python_version:
-        type: string
-    docker:
-      - image: circleci/python:<<parameters.python_version>>
-      - image: redislabs/rebloom:edge
 
-    working_directory: ~/repo
+commands:
 
+  abort_for_docs:
     steps:
+      - run:
+          name: Avoid tests for docs
+          command: |
+            if [[ $CIRCLE_BRANCH == *docs ]]; then
+              echo "Identifies as documents PR, no testing required"
+              circleci step halt
+            fi
+
+  abort_for_noci:
+    steps:
+      - run:
+          name: Ignore CI for specific branches
+          command: |
+            if [[ $CIRCLE_BRANCH == *noci ]]; then
+              echo "Identifies as actively ignoring CI, no testing required."
+              circleci step halt
+            fi
+
+
+  early_return_for_forked_pull_requests:
+    description: >-
+      If this build is from a fork, stop executing the current job and return success.
+      This is useful to avoid steps that will fail due to missing credentials.
+    steps:
+      - run:
+          name: Early return if this build is from a forked PR
+          command: |
+            if [[ -n "$CIRCLE_PR_NUMBER" ]]; then
+              echo "Nothing to do for forked PRs, so marking this step successful"
+              circleci step halt
+            fi
+
+  build_and_test:
+    steps:
+      - abort_for_docs
+      - abort_for_noci
       - checkout
 
       - restore_cache: # Download and cache dependencies
@@ -25,13 +54,14 @@ jobs:
           - v1-dependencies-
 
       - run:
-          name: install tox dependencies
+          name: install poetry
           command: |
-            pip install --user --quiet -r requirements.txt
+            pip install --user --quiet poetry
 
       - save_cache:
           paths:
-            - ./venv
+            - ./.tox
+            - ~/.cache/pip
           key: v1-dependencies-{{ checksum "pyproject.toml" }}
 
       - run:
@@ -39,6 +69,11 @@ jobs:
           command: |
             poetry build --format sdist
             poetry build --format wheel
+
+      - run:
+          name: lint
+          command: |
+            tox -e linters
 
       - run:
           name: run tests
@@ -49,40 +84,47 @@ jobs:
           path: test-reports
           destination: test-reports
 
-  build_nightly:
-    docker:
-      - image: circleci/python:3.7.1
-      - image: redislabs/rebloom:edge
 
-    working_directory: ~/repo
+  docker:
+    parameters:
+      docker_version:
+        type: string
+        default: "edge"
+    steps:
+      - setup_remote_docker
+      - run:
+          name: dockers
+          description: Build and release docker
+          command: |
+            bash <(curl -fsSL https://get.docker.com)
+            docker login -u redisfab -p $DOCKER_REDISFAB_PWD
+            docker build -t redisgraph:<<parameters.docker_version>> .
+            docker push
+
+jobs:
+  build:
+    parameters:
+      python_version:
+        type: string
+    docker:
+      - image: circleci/python:<<parameters.python_version>>
+      - image: redislabs/redisbloom:edge
+    steps:
+      - build_and_test
+
+  # since this is used by cron, we by default build against latest
+  build_and_publish:
+    parameters:
+      docker_version:
+        type: string
+        default: "edge"
+    docker:
+      - image: circleci/python:latest
+      - image: redislabs/redisbloom:edge
 
     steps:
-      - checkout
-
-      - restore_cache: # Download and cache dependencies
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run:
-          name: install dependencies
-          command: |
-            virtualenv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-            pip install codecov
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            REDIS_PORT=6379 python test_commands.py
+      - build_and_test
+      - docker
 
 on-any-branch: &on-any-branch
   filters:
@@ -92,27 +134,34 @@ on-any-branch: &on-any-branch
     tags:
       ignore: /.*/
 
+on-master: &on-master
+  filters:
+    branches:
+      only:
+        - master
+
+# the is to build and test, per commit against all supported python versions
+python-versions: &python-versions
+  matrix:
+    parameters:
+      python_version:
+        - "3.6.9"
+        - "3.7.9"
+        - "3.8.9"
+        - "3.9.4"
+        - "latest"
+
 workflows:
-  version: 2
-  ci:
+  commit:
     jobs:
       - build:
-          <<: *on-any-branch
-          matrix:
-            parameters:
-              python_version:
-                - "3.6.9"
-                - "3.7.9"
-                - "3.8.9"
-                - "3.9.4"
+         <<: *on-any-branch
+         <<: *python-versions
 
   nightly:
     triggers:
       - schedule:
           cron: "0 0 * * *"
-          filters:
-            branches:
-              only:
-                - master
+          <<: *on-master
     jobs:
-      - build_nightly
+      - build_and_publish

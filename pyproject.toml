@@ -19,6 +19,7 @@ classifiers = [
     'Programming Language :: Python :: 3.9',
     'Topic :: Database'
 ]
+keywords = ["Redis", "Extension", "Probabilistic", "TopK", "Cuckoo-Filter", "Bloom-Filter", "Count-min-sketch"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -27,7 +28,6 @@ redis = "^3.5.3"
 rmtest = "^0.7.0"
 six = "^1.16.0"
 
-keywords = 'Redis Extension Probabilistic TopK Cuckoo-Filter Bloom-Filter Count-min-sketch'
 
 [tool.poetry.urls]
 url = "https://redisbloom.io"
@@ -36,6 +36,10 @@ repository = "https://github.com/RedisBloom/redisbloom-py"
 [tool.poetry.dev-dependencies]
 codecov = "^2.1.11"
 flake8 = "^3.9.2"
+tox = "^3.23.1"
+tox-poetry = "^0.3.0"
+bandit = "^1.7.0"
+vulture = "^2.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

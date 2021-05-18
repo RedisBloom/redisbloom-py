@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/RedisBloom/redisbloom-py/tree/master.svg?style=svg)](https://circleci.com/gh/RedisBloom/redisbloom-py/tree/master)
 [![GitHub issues](https://img.shields.io/github/release/RedisBloom/redisbloom-py.svg)](https://github.com/RedisBloom/redisbloom-py/releases/latest)
 [![Codecov](https://codecov.io/gh/RedisBloom/redisbloom-py/branch/master/graph/badge.svg)](https://codecov.io/gh/RedisBloom/redisbloom-py)
-[![Known Vulnerabilities](https://snyk.io/test/github/RedisBloom/redisbloom-py/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/RedisBloom/redisbloom-py?targetFile=requirements.txt)
+[![Known Vulnerabilities](https://snyk.io/test/github/RedisBloom/redisbloom-py/badge.svg?targetFile=pyproject.toml)](https://snyk.io/test/github/RedisBloom/redisbloom-py?targetFile=pyproject.toml)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisBloom/redisbloom-py.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisBloom/redisbloom-py/alerts/)
 
 # Python client for RedisBloom
@@ -68,7 +68,7 @@ For complete documentation about RedisBloom's commands, refer to [RedisBloom's w
 1. Create a virtualenv to manage your python dependencies, and ensure it's active.
    ```virtualenv -v venv```
 2. Install [pypoetry](https://python-poetry.org/) to manage your dependencies.
-   ```pip install -r requirements.txt```
+   ```pip install --user poetry```
 3. Install dependencies.
    ```poetry install```
 
