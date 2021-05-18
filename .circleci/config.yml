@@ -56,7 +56,7 @@ commands:
       - run:
           name: install poetry and tox
           command: |
-            pip install --user --quiet poetry tox
+            pip install --user --quiet poetry tox tox-poetry
 
       - save_cache:
           paths:
