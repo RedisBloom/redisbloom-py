@@ -108,7 +108,7 @@ jobs:
         type: string
     docker:
       - image: circleci/python:<<parameters.python_version>>
-      - image: redislabs/redisbloom:edge
+      - image: redislabs/rebloom:edge
     steps:
       - build_and_test
 
@@ -120,7 +120,7 @@ jobs:
         default: "edge"
     docker:
       - image: circleci/python:latest
-      - image: redislabs/redisbloom:edge
+      - image: redislabs/rebloom:edge
 
     steps:
       - build_and_test

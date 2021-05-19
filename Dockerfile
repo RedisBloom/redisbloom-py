@@ -1,4 +1,4 @@
-FROM redislabs/redisbloom:edge as builder
+FROM redislabs/rebloom:edge as builder
 
 RUN apt update && apt install -y python3 python3-pip
 ADD . /build
