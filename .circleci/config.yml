@@ -72,7 +72,7 @@ commands:
       - run:
           name: run tests
           command:
-            tox
+            tox -e cover
 
       - save_cache:
           paths:
