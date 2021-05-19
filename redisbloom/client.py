@@ -2,8 +2,10 @@ import six
 from redis.client import Redis, Pipeline
 from redis._compat import nativestr
 
+
 def bool_ok(response):
     return nativestr(response) == 'OK'
+
 
 class BFInfo(object):
     capacity = None
@@ -19,6 +21,7 @@ class BFInfo(object):
         self.filterNum = response['Number of filters']
         self.insertedNum = response['Number of items inserted']
         self.expansionRate = response['Expansion rate']
+
 
 class CFInfo(object):
     size = None
@@ -41,6 +44,7 @@ class CFInfo(object):
         self.expansionRate = response['Expansion rate']
         self.maxIteration = response['Max iterations']
 
+
 class CMSInfo(object):
     width = None
     depth = None
@@ -51,6 +55,7 @@ class CMSInfo(object):
         self.width = response['width']
         self.depth = response['depth']
         self.count = response['count']
+
 
 class TopKInfo(object):
     k = None
@@ -64,6 +69,7 @@ class TopKInfo(object):
         self.width = response['width']
         self.depth = response['depth']
         self.decay = response['decay']
+
 
 class TDigestInfo(object):
     compression = None
@@ -84,8 +90,10 @@ class TDigestInfo(object):
         self.unmergedWeight = response['Unmerged weight']
         self.totalCompressions = response['Total compressions']
 
+
 def spaceHolder(response):
     return response
+
 
 def parseToList(response):
     res = []
@@ -96,9 +104,10 @@ def parseToList(response):
             res.append(None)
     return res
 
-class Client(Redis): #changed from StrictRedis
+
+class Client(Redis):  # changed from StrictRedis
     """
-    This class subclasses redis-py's `Redis` and implements 
+    This class subclasses redis-py's `Redis` and implements
     RedisBloom's commands.
     The client allows to interact with RedisBloom and use all of
     it's functionality.
@@ -131,7 +140,7 @@ class Client(Redis): #changed from StrictRedis
     CF_SCANDUMP = 'CF.SCANDUMP'
     CF_LOADCHUNK = 'CF.LOADCHUNK'
     CF_INFO = 'CF.INFO'
-    
+
     CMS_INITBYDIM = 'CMS.INITBYDIM'
     CMS_INITBYPROB = 'CMS.INITBYPROB'
     CMS_INCRBY = 'CMS.INCRBY'
@@ -161,55 +170,55 @@ class Client(Redis): #changed from StrictRedis
         Creates a new RedisBloom client.
         """
         Redis.__init__(self, *args, **kwargs)
-            
+
         # Set the module commands' callbacks
         MODULE_CALLBACKS = {
-            self.BF_RESERVE : bool_ok,
-            #self.BF_ADD : spaceHolder,
-            #self.BF_MADD : spaceHolder,
-            #self.BF_INSERT : spaceHolder,
-            #self.BF_EXISTS : spaceHolder,
-            #self.BF_MEXISTS : spaceHolder,
-            #self.BF_SCANDUMP : spaceHolder,
-            #self.BF_LOADCHUNK : spaceHolder,
-            self.BF_INFO : BFInfo,
+            self.BF_RESERVE: bool_ok,
+            #self.BF_ADD: spaceHolder,
+            #self.BF_MADD: spaceHolder,
+            #self.BF_INSERT: spaceHolder,
+            #self.BF_EXISTS: spaceHolder,
+            #self.BF_MEXISTS: spaceHolder,
+            #self.BF_SCANDUMP: spaceHolder,
+            #self.BF_LOADCHUNK: spaceHolder,
+            self.BF_INFO: BFInfo,
 
-            self.CF_RESERVE : bool_ok,
-            #self.CF_ADD : spaceHolder,
-            #self.CF_ADDNX : spaceHolder,
-            #self.CF_INSERT : spaceHolder,
-            #self.CF_INSERTNX : spaceHolder,
-            #self.CF_EXISTS : spaceHolder,
-            #self.CF_DEL : spaceHolder,
-            #self.CF_COUNT : spaceHolder,
-            #self.CF_SCANDUMP : spaceHolder,
-            #self.CF_LOADCHUNK : spaceHolder,
-            self.CF_INFO : CFInfo,
+            self.CF_RESERVE: bool_ok,
+            #self.CF_ADD: spaceHolder,
+            #self.CF_ADDNX: spaceHolder,
+            #self.CF_INSERT: spaceHolder,
+            #self.CF_INSERTNX: spaceHolder,
+            #self.CF_EXISTS: spaceHolder,
+            #self.CF_DEL: spaceHolder,
+            #self.CF_COUNT: spaceHolder,
+            #self.CF_SCANDUMP: spaceHolder,
+            #self.CF_LOADCHUNK: spaceHolder,
+            self.CF_INFO: CFInfo,
 
-            
-            self.CMS_INITBYDIM : bool_ok,
-            self.CMS_INITBYPROB : bool_ok,
-            #self.CMS_INCRBY : spaceHolder,
-            #self.CMS_QUERY : spaceHolder,
-            self.CMS_MERGE : bool_ok,
-            self.CMS_INFO : CMSInfo,
 
-            self.TOPK_RESERVE : bool_ok,
-            self.TOPK_ADD : parseToList,
-            #self.TOPK_QUERY : spaceHolder,
-            #self.TOPK_COUNT : spaceHolder,
-            self.TOPK_LIST : parseToList,
-            self.TOPK_INFO : TopKInfo,
+            self.CMS_INITBYDIM: bool_ok,
+            self.CMS_INITBYPROB: bool_ok,
+            #self.CMS_INCRBY: spaceHolder,
+            #self.CMS_QUERY: spaceHolder,
+            self.CMS_MERGE: bool_ok,
+            self.CMS_INFO: CMSInfo,
 
-            self.TDIGEST_CREATE : bool_ok,
-            # self.TDIGEST_RESET : bool_ok,
-            # self.TDIGEST_ADD : spaceHolder,
-            # self.TDIGEST_MERGE : spaceHolder,
-            # self.TDIGEST_CDF : spaceHolder,
-            # self.TDIGEST_QUANTILE : spaceHolder,
-            # self.TDIGEST_MIN : spaceHolder,
-            # self.TDIGEST_MAX : spaceHolder,
-            self.TDIGEST_INFO : TDigestInfo,
+            self.TOPK_RESERVE: bool_ok,
+            self.TOPK_ADD: parseToList,
+            #self.TOPK_QUERY: spaceHolder,
+            #self.TOPK_COUNT: spaceHolder,
+            self.TOPK_LIST: parseToList,
+            self.TOPK_INFO: TopKInfo,
+
+            self.TDIGEST_CREATE: bool_ok,
+            # self.TDIGEST_RESET: bool_ok,
+            # self.TDIGEST_ADD: spaceHolder,
+            # self.TDIGEST_MERGE: spaceHolder,
+            # self.TDIGEST_CDF: spaceHolder,
+            # self.TDIGEST_QUANTILE: spaceHolder,
+            # self.TDIGEST_MIN: spaceHolder,
+            # self.TDIGEST_MAX: spaceHolder,
+            self.TDIGEST_INFO: TDigestInfo,
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
@@ -275,7 +284,7 @@ class Client(Redis): #changed from StrictRedis
 ################## Bloom Filter Functions ######################
     def bfCreate(self, key, errorRate, capacity, expansion=None, noScale=None):
         """
-        Creates a new Bloom Filter ``key`` with desired probability of false 
+        Creates a new Bloom Filter ``key`` with desired probability of false
         positives ``errorRate`` expected entries to be inserted as ``capacity``.
         Default expansion value is 2.
         By default, filter is auto-scaling.
@@ -285,13 +294,13 @@ class Client(Redis): #changed from StrictRedis
         self.appendNoScale(params, noScale)
 
         return self.execute_command(self.BF_RESERVE, *params)
-        
+
     def bfAdd(self, key, item):
         """
         Adds to a Bloom Filter ``key`` an ``item``.
         """
         params = [key, item]
-        
+
         return self.execute_command(self.BF_ADD, *params)
 
     def bfMAdd(self, key, *items):
@@ -306,7 +315,7 @@ class Client(Redis): #changed from StrictRedis
     def bfInsert(self, key, items, capacity=None, error=None, noCreate=None, expansion=None, noScale=None):
         """
         Adds to a Bloom Filter ``key`` multiple ``items``. If ``nocreate``
-        remain ``None`` and ``key does not exist, a new Bloom Filter ``key`` 
+        remain ``None`` and ``key does not exist, a new Bloom Filter ``key``
         will be created with desired probability of false positives ``errorRate``
         and expected entries to be inserted as ``size``.
         """
@@ -325,7 +334,7 @@ class Client(Redis): #changed from StrictRedis
         Checks whether an ``item`` exists in Bloom Filter ``key``.
         """
         params = [key, item]
-        
+
         return self.execute_command(self.BF_EXISTS, *params)
 
     def bfMExists(self, key, *items):
@@ -347,7 +356,7 @@ class Client(Redis): #changed from StrictRedis
         (0, NULL) to indicate completion.
         """
         params = [key, iter]
-        
+
         return self.execute_command(self.BF_SCANDUMP, *params)
 
     def bfLoadChunk(self, key, iter, data):
@@ -358,7 +367,7 @@ class Client(Redis): #changed from StrictRedis
         Ensure that the bloom filter will not be modified between invocations.
         """
         params = [key, iter, data]
-        
+
         return self.execute_command(self.BF_LOADCHUNK, *params)
 
     def bfInfo(self, key):
@@ -381,13 +390,13 @@ class Client(Redis): #changed from StrictRedis
         self.appendMaxIterations(params, max_iterations)
 
         return self.execute_command(self.CF_RESERVE, *params)
-        
+
     def cfAdd(self, key, item):
         """
         Adds an ``item`` to a Cuckoo Filter ``key``.
         """
         params = [key, item]
-        
+
         return self.execute_command(self.CF_ADD, *params)
 
     def cfAddNX(self, key, item):
@@ -396,7 +405,7 @@ class Client(Redis): #changed from StrictRedis
         Command might be slower that ``cfAdd``.
         """
         params = [key, item]
-        
+
         return self.execute_command(self.CF_ADDNX, *params)
 
     def cfInsert(self, key, items, capacity=None, nocreate=None):
@@ -430,7 +439,7 @@ class Client(Redis): #changed from StrictRedis
         Checks whether an ``item`` exists in Cuckoo Filter ``key``.
         """
         params = [key, item]
-        
+
         return self.execute_command(self.CF_EXISTS, *params)
 
     def cfDel(self, key, item):
@@ -459,7 +468,7 @@ class Client(Redis): #changed from StrictRedis
         (0, NULL) to indicate completion.
         """
         params = [key, iter]
-        
+
         return self.execute_command(self.CF_SCANDUMP, *params)
 
     def cfLoadChunk(self, key, iter, data):
@@ -470,7 +479,7 @@ class Client(Redis): #changed from StrictRedis
         Ensure that the Cuckoo filter will not be modified between invocations.
         """
         params = [key, iter, data]
-        
+
         return self.execute_command(self.CF_LOADCHUNK, *params)
 
     def cfInfo(self, key):
@@ -489,7 +498,7 @@ class Client(Redis): #changed from StrictRedis
         (``width``, ``depth``) specified by user.
         """
         params = [key, width, depth]
-        
+
         return self.execute_command(self.CMS_INITBYDIM, *params)
 
     def cmsInitByProb(self, key, error, probability):
@@ -498,7 +507,7 @@ class Client(Redis): #changed from StrictRedis
         (``error``, ``probability``) specified by user.
         """
         params = [key, error, probability]
-        
+
         return self.execute_command(self.CMS_INITBYPROB, *params)
 
     def cmsIncrBy(self, key, items, increments):
@@ -509,7 +518,7 @@ class Client(Redis): #changed from StrictRedis
         """
         params = [key]
         self.appendItemsAndIncrements(params, items, increments)
-        
+
         return self.execute_command(self.CMS_INCRBY, *params)
 
     def cmsQuery(self, key, *items):
@@ -519,12 +528,12 @@ class Client(Redis): #changed from StrictRedis
         """
         params = [key]
         params += items
-        
+
         return self.execute_command(self.CMS_QUERY, *params)
 
     def cmsMerge(self, destKey, numKeys, srcKeys, weights=[]):
         """
-        Merges ``numKeys`` of sketches into ``destKey``. Sketches specified in ``srcKeys``. 
+        Merges ``numKeys`` of sketches into ``destKey``. Sketches specified in ``srcKeys``.
         All sketches must have identical width and depth.
         ``Weights`` can be used to multiply certain sketches. Default weight is 1.
         Both ``srcKeys`` and ``weights`` are lists.
@@ -547,13 +556,12 @@ class Client(Redis): #changed from StrictRedis
 
     def topkReserve(self, key, k, width, depth, decay):
         """
-        Creates a new Cuckoo Filter ``key`` with desired probability of false 
+        Creates a new Cuckoo Filter ``key`` with desired probability of false
         positives ``errorRate`` expected entries to be inserted as ``size``.
         """
         params = [key, k, width, depth, decay]
-        
-        return self.execute_command(self.TOPK_RESERVE, *params)
 
+        return self.execute_command(self.TOPK_RESERVE, *params)
 
     def topkAdd(self, key, *items):
         """
@@ -561,7 +569,7 @@ class Client(Redis): #changed from StrictRedis
         """
         params = [key]
         params += items
-        
+
         return self.execute_command(self.TOPK_ADD, *params)
 
     def topkQuery(self, key, *items):
@@ -570,12 +578,12 @@ class Client(Redis): #changed from StrictRedis
         """
         params = [key]
         params += items
-        
+
         return self.execute_command(self.TOPK_QUERY, *params)
 
     def topkCount(self, key, *items):
         """
-        Returns count for one ``item`` or more from ``key``. 
+        Returns count for one ``item`` or more from ``key``.
         """
         params = [key]
         params += items
@@ -586,14 +594,14 @@ class Client(Redis): #changed from StrictRedis
         """
         Return full list of items in Top-K list of ``key```.
         """
-        
+
         return self.execute_command(self.TOPK_LIST, key)
 
     def topkInfo(self, key):
         """
         Returns k, width, depth and decay values of ``key``.
         """
-        
+
         return self.execute_command(self.TOPK_INFO, key)
 
 ################## T-Digest Functions ######################
@@ -672,7 +680,7 @@ class Client(Redis): #changed from StrictRedis
         """
 
         return self.execute_command(self.TDIGEST_INFO, key)
-        
+
     def pipeline(self, transaction=True, shard_hint=None):
         """
         Return a new pipeline object that can queue multiple commands for
@@ -688,6 +696,7 @@ class Client(Redis): #changed from StrictRedis
             transaction=transaction,
             shard_hint=shard_hint)
         return p
+
 
 class Pipeline(Pipeline, Client):
     "Pipeline for RedisBloom Client"

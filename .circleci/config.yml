@@ -58,12 +58,6 @@ commands:
           command: |
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
-      - save_cache:
-          paths:
-            - ./.tox
-            - ~/.cache/pip
-          key: v1-dependencies-{{ checksum "pyproject.toml" }}
-
       - run:
           name: build
           command: |
@@ -79,6 +73,12 @@ commands:
           name: run tests
           command:
             tox
+
+      - save_cache:
+          paths:
+            - ./.tox
+            - ~/.cache/pip
+          key: v1-dependencies-{{ checksum "pyproject.toml" }}
 
       - store_artifacts:
           path: test-reports
