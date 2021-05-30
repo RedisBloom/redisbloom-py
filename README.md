@@ -68,7 +68,7 @@ For complete documentation about RedisBloom's commands, refer to [RedisBloom's w
 1. Create a virtualenv to manage your python dependencies, and ensure it's active.
    ```virtualenv -v venv```
 2. Install [pypoetry](https://python-poetry.org/) to manage your dependencies.
-   ```pip install --user poetry```
+   ```pip install poetry```
 3. Install dependencies.
    ```poetry install```
 
