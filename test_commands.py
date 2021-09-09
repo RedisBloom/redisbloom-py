@@ -200,7 +200,7 @@ class TestRedisBloom(TestCase):
         self.assertTrue(rb.topkReserve('topklist', 3, 50, 3, 0.9))
         self.assertTrue(rb.topkAdd('topklist', 'A', 'B', 'C', 'D', 'E','A', 'A', 'B', 'C',
                                    'G', 'D', 'B', 'D', 'A', 'E', 'E'))
-        self.assertEqual(['D', 'A', 'B'], rb.topkList('topklist'))
+        self.assertEqual(['A', 'D', 'B'], rb.topkList('topklist'))
         info = rb.topkInfo('topklist')
         self.assertEqual(3, info.k)
         self.assertEqual(50, info.width)
