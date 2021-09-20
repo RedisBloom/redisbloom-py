@@ -54,7 +54,7 @@ rb.topkAdd('topk', 'A', 'B', 'C', 'D', 'E', 'A', 'A', 'B',
                    'C', 'G', 'D', 'B', 'D', 'A', 'E', 'E')
 rb.topkQuery('topk', 'A', 'B', 'C', 'D')    # returns [1, 1, 0, 1]
 rb.topkCount('topk', 'A', 'B', 'C', 'D')    # returns [4, 3, 2, 3]
-rb.topkList('topk')                         # returns ['D', 'A', 'B']
+rb.topkList('topk')                         # returns ['A', 'B', 'E']
 rb.topkListWithCount('topk')                # returns ['A', 4, 'B', 3, 'E', 3]
 ```
 
