@@ -210,7 +210,6 @@ class Client(Redis):  # changed from StrictRedis
             #self.TOPK_QUERY: spaceHolder,
             #self.TOPK_COUNT: spaceHolder,
             self.TOPK_LIST: parseToList,
-            self.TOPK_LIST: parseToList,
             self.TOPK_INFO: TopKInfo,
 
             self.TDIGEST_CREATE: bool_ok,
