@@ -98,7 +98,9 @@ def spaceHolder(response):
 def parseToList(response):
     res = []
     for item in response:
-        if item is not None:
+        if isinstance(item, int):
+            res.append(item)
+        elif item is not None:
             res.append(nativestr(item))
         else:
             res.append(None)
@@ -207,6 +209,7 @@ class Client(Redis):  # changed from StrictRedis
             self.TOPK_ADD: parseToList,
             #self.TOPK_QUERY: spaceHolder,
             #self.TOPK_COUNT: spaceHolder,
+            self.TOPK_LIST: parseToList,
             self.TOPK_LIST: parseToList,
             self.TOPK_INFO: TopKInfo,
 
@@ -596,6 +599,13 @@ class Client(Redis):  # changed from StrictRedis
         """
 
         return self.execute_command(self.TOPK_LIST, key)
+
+    def topkListWithCount(self, key):
+        """
+        Return full list of items with probabilistic count in Top-K list of ``key```.
+        """
+
+        return self.execute_command(self.TOPK_LIST, key, 'WITHCOUNT')
 
     def topkInfo(self, key):
         """

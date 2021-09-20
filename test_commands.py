@@ -187,11 +187,11 @@ class TestRedisBloom(TestCase):
     def testTopK(self):
         # test list with empty buckets
         self.assertTrue(rb.topkReserve('topk', 3, 50, 4, 0.9))
-        self.assertEqual([None, None, None, None, None, None, None, None,
-                          None, None, None, None, 'C', None, None, None, None],
+        self.assertEqual([None, None, None, 'A', 'C', 'D', None, None, 'E',
+                          None, 'B', 'C', None, None, None, 'D', None],
                           rb.topkAdd('topk', 'A', 'B', 'C', 'D', 'E', 'A', 'A', 'B', 'C',
                                      'G', 'D', 'B', 'D', 'A', 'E', 'E', 1))
-        self.assertEqual([1, 1, 0, 1, 0, 0, 0],
+        self.assertEqual([1, 1, 0, 0, 1, 0, 0],
                           rb.topkQuery('topk', 'A', 'B', 'C', 'D', 'E', 'F', 'G'))
         self.assertEqual([4, 3, 2, 3, 3, 0, 1],
                           rb.topkCount('topk', 'A', 'B', 'C', 'D', 'E', 'F', 'G'))
@@ -200,7 +200,8 @@ class TestRedisBloom(TestCase):
         self.assertTrue(rb.topkReserve('topklist', 3, 50, 3, 0.9))
         self.assertTrue(rb.topkAdd('topklist', 'A', 'B', 'C', 'D', 'E','A', 'A', 'B', 'C',
                                    'G', 'D', 'B', 'D', 'A', 'E', 'E'))
-        self.assertEqual(['A', 'D', 'B'], rb.topkList('topklist'))
+        self.assertEqual(['A', 'B', 'E'], rb.topkList('topklist'))
+        self.assertEqual(['A', 4, 'B', 3, 'E', 3], rb.topkListWithCount('topklist'))
         info = rb.topkInfo('topklist')
         self.assertEqual(3, info.k)
         self.assertEqual(50, info.width)
