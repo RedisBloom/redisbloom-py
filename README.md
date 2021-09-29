@@ -7,7 +7,7 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisBloom/redisbloom-py.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisBloom/redisbloom-py/alerts/)
 
 # Python client for RedisBloom
-[![Forum](https://img.shields.io/badge/Forum-RedisBloom-blue)](https://forum.redislabs.com/c/modules/redisbloom)
+[![Forum](https://img.shields.io/badge/Forum-RedisBloom-blue)](https://forum..com/c/modules/redisbloom)
 [![Discord](https://img.shields.io/discord/697882427875393627?style=flat-square)](https://discord.gg/wXhwjCQ)
 
 redisbloom-py is a package that gives developers easy access to several probabilistic data structures. The package extends [redis-py](https://github.com/andymccurdy/redis-py)'s interface with RedisBloom's API.
