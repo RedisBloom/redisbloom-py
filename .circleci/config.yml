@@ -47,20 +47,17 @@ commands:
       - abort_for_noci
       - checkout
 
-      - restore_cache: # Download and cache dependencies
-          keys:
-          - v1-dependencies-{{ checksum "pyproject.toml" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
       - run:
           name: install tox dependencies
           command: |
+            pip install --user --upgrade pip virtualenv
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
       - run:
           name: build sdist and wheels
           command: |
+            # https://github.com/python-poetry/poetry/issues/4210
+            poetry config experimental.new-installer false
             poetry build
 
       - run:
@@ -72,12 +69,6 @@ commands:
           name: run tests
           command:
             tox -e cover
-
-      - save_cache:
-          paths:
-            - ./.tox
-            - ~/.cache/pip
-          key: v1-dependencies-{{ checksum "pyproject.toml" }}
 
       - store_artifacts:
           path: test-reports
@@ -119,6 +110,7 @@ python-versions: &python-versions
         - "3.7.9"
         - "3.8.9"
         - "3.9.4"
+        - "3.10.0"
         - "latest"
 
 workflows:
