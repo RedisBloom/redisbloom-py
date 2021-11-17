@@ -27,7 +27,7 @@ keywords = ["Redis", "Extension", "Probabilistic", "TopK", "Cuckoo-Filter", "Blo
 [tool.poetry.dependencies]
 python = "^3.6"
 hiredis = "^2.0.0"
-redis = "^3.5.3"
+redis = "3.5.3"
 rmtest = "^0.7.0"
 six = "^1.16.0"
 
