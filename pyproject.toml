@@ -2,7 +2,7 @@
 name = "redisbloom-py"
 version = "0.4.1"
 description = "RedisBloom Python Client"
-authors = ["Redis <oss@.com>"]
+authors = ["Redis <oss@redis.com>"]
 license = "BSD-3-Clause"
 readme = "README.md"
 
