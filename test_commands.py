@@ -248,15 +248,12 @@ class TestRedisBloom(TestCase):
         # assert min min/max have same result as quantile 0 and 1
         self.assertEqual(
             float(rb.tdigestMax('tDigest')),
-            float(rb.tdigestQuantile('tDigest', 1.0)),
+            float(rb.tdigestQuantile('tDigest', 99.99000000000001)[0]),
         )
         self.assertEqual(
             float(rb.tdigestMin('tDigest')),
-            float(rb.tdigestQuantile('tDigest', 0.0)),
+            float(rb.tdigestQuantile('tDigest', 0.01)[0]),
         )
-
-        self.assertAlmostEqual(1.0, float(rb.tdigestQuantile('tDigest', 0.01)), 2)
-        self.assertAlmostEqual(99.0, float(rb.tdigestQuantile('tDigest', 0.99)), 2)
 
     def testTDigestCdf(self):
         self.assertTrue(rb.tdigestCreate('tDigest', 100))
