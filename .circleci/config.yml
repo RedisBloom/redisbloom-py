@@ -50,7 +50,7 @@ commands:
       - run:
           name: install tox dependencies
           command: |
-            pip install --user --upgrade pip virtualenv
+            pip install --user --upgrade pip virtualenv poetry
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
       - run:
@@ -84,7 +84,7 @@ jobs:
         default: "latest"
     docker:
       - image: circleci/python:<<parameters.python_version>>
-      - image: redislabs/rebloom:edge
+      - image: redislabs/redismod:edge
     steps:
       - build_and_test
 
