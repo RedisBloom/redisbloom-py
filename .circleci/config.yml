@@ -50,7 +50,6 @@ commands:
       - run:
           name: install tox dependencies
           command: |
-            sudo apt remove -y python3-virtualenv
             pip install --user --upgrade pip virtualenv
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
@@ -59,6 +58,7 @@ commands:
           command: |
             # https://github.com/python-poetry/poetry/issues/4210
             poetry config experimental.new-installer false
+            poetry config virtualenvs.create fals
             poetry build
 
       - run:
