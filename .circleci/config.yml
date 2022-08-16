@@ -50,6 +50,7 @@ commands:
       - run:
           name: install tox dependencies
           command: |
+            sudo apt remove -y python3-virtualenv
             pip install --user --upgrade pip virtualenv
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
