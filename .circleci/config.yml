@@ -58,7 +58,7 @@ commands:
           command: |
             # https://github.com/python-poetry/poetry/issues/4210
             poetry config experimental.new-installer false
-            poetry config virtualenvs.create fals
+            poetry config virtualenvs.create false
             poetry build
 
       - run:
