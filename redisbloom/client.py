@@ -283,6 +283,11 @@ class Client(Redis):  # changed from StrictRedis
         if bucket_size is not None:
             params.extend(['BUCKETSIZE', bucket_size])
 
+    @staticmethod
+    def appendCompression(params, compression):
+        if compression is not None:
+            params.extend(['COMPRESSION', compression])
+
 ################## Bloom Filter Functions ######################
     def bfCreate(self, key, errorRate, capacity, expansion=None, noScale=None):
         """
@@ -615,11 +620,12 @@ class Client(Redis):  # changed from StrictRedis
 
 ################## T-Digest Functions ######################
 
-    def tdigestCreate(self, key, compression):
+    def tdigestCreate(self, key, compression=None):
         """"
         Allocate the memory and initialize the t-digest.
         """
-        params = [key, compression]
+        params = [key]
+        self.appendCompression(params, compression)
 
         return self.execute_command(self.TDIGEST_CREATE, *params)
 
