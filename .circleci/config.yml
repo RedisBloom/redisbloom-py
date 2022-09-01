@@ -50,7 +50,7 @@ commands:
       - run:
           name: install tox dependencies
           command: |
-            pip uninstall poetry
+            pip uninstall -y poetry
             pip install --user --upgrade pip virtualenv poetry
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
