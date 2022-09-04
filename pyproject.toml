@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "redisbloom"
-version = "0.4.2"
+version = "0.5.0"
 description = "RedisBloom Python Client"
 authors = ["Redis <oss@redis.com>"]
 license = "BSD-3-Clause"

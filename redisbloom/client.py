@@ -71,26 +71,6 @@ class TopKInfo(object):
         self.decay = response['decay']
 
 
-class TDigestInfo(object):
-    compression = None
-    capacity = None
-    mergedNodes = None
-    unmergedNodes = None
-    mergedWeight = None
-    unmergedWeight = None
-    totalCompressions = None
-
-    def __init__(self, args):
-        response = dict(zip(map(nativestr, args[::2]), args[1::2]))
-        self.compression = response['Compression']
-        self.capacity = response['Capacity']
-        self.mergedNodes = response['Merged nodes']
-        self.unmergedNodes = response['Unmerged nodes']
-        self.mergedWeight = response['Merged weight']
-        self.unmergedWeight = response['Unmerged weight']
-        self.totalCompressions = response['Total compressions']
-
-
 def spaceHolder(response):
     return response
 
@@ -118,7 +98,6 @@ class Client(Redis):  # changed from StrictRedis
     - CF for Cuckoo Filter
     - CMS for Count-Min Sketch
     - TOPK for TopK Data Structure
-    - TDIGEST for estimate rank statistics
     """
 
     BF_RESERVE = 'BF.RESERVE'
@@ -156,16 +135,6 @@ class Client(Redis):  # changed from StrictRedis
     TOPK_COUNT = 'TOPK.COUNT'
     TOPK_LIST = 'TOPK.LIST'
     TOPK_INFO = 'TOPK.INFO'
-
-    TDIGEST_CREATE = 'TDIGEST.CREATE'
-    TDIGEST_RESET = 'TDIGEST.RESET'
-    TDIGEST_ADD = 'TDIGEST.ADD'
-    TDIGEST_MERGE = 'TDIGEST.MERGE'
-    TDIGEST_CDF = 'TDIGEST.CDF'
-    TDIGEST_QUANTILE = 'TDIGEST.QUANTILE'
-    TDIGEST_MIN = 'TDIGEST.MIN'
-    TDIGEST_MAX = 'TDIGEST.MAX'
-    TDIGEST_INFO = 'TDIGEST.INFO'
 
     def __init__(self, *args, **kwargs):
         """
@@ -212,15 +181,6 @@ class Client(Redis):  # changed from StrictRedis
             self.TOPK_LIST: parseToList,
             self.TOPK_INFO: TopKInfo,
 
-            self.TDIGEST_CREATE: bool_ok,
-            # self.TDIGEST_RESET: bool_ok,
-            # self.TDIGEST_ADD: spaceHolder,
-            # self.TDIGEST_MERGE: spaceHolder,
-            # self.TDIGEST_CDF: spaceHolder,
-            # self.TDIGEST_QUANTILE: spaceHolder,
-            # self.TDIGEST_MIN: spaceHolder,
-            # self.TDIGEST_MAX: spaceHolder,
-            self.TDIGEST_INFO: TDigestInfo,
         }
         for k, v in six.iteritems(MODULE_CALLBACKS):
             self.set_response_callback(k, v)
@@ -612,83 +572,6 @@ class Client(Redis):  # changed from StrictRedis
         """
 
         return self.execute_command(self.TOPK_INFO, key)
-
-################## T-Digest Functions ######################
-
-    def tdigestCreate(self, key, compression):
-        """"
-        Allocate the memory and initialize the t-digest.
-        """
-        params = [key, compression]
-
-        return self.execute_command(self.TDIGEST_CREATE, *params)
-
-    def tdigestReset(self, key):
-        """
-        Reset the sketch ``key`` to zero - empty out the sketch and re-initialize it.
-        """
-
-        return self.execute_command(self.TDIGEST_RESET, key)
-
-    def tdigestAdd(self, key, values, weights):
-        """
-        Adds one or more samples (value with weight) to a sketch ``key``.
-        Both ``values`` and ``weights`` are lists.
-        Example - tdigestAdd('A', [1500.0], [1.0])
-        """
-        params = [key]
-        self.appendValuesAndWeights(params, values, weights)
-
-        return self.execute_command(self.TDIGEST_ADD, *params)
-
-    def tdigestMerge(self, toKey, fromKey):
-        """
-        Merges all of the values from 'fromKey' to 'toKey' sketch.
-        """
-        params = [toKey, fromKey]
-
-        return self.execute_command(self.TDIGEST_MERGE, *params)
-
-    def tdigestMin(self, key):
-        """
-        Returns minimum value from the sketch ``key``.
-        Will return DBL_MAX if the sketch is empty.
-        """
-
-        return self.execute_command(self.TDIGEST_MIN, key)
-
-    def tdigestMax(self, key):
-        """
-        Returns maximum value from the sketch ``key``.
-        Will return DBL_MIN if the sketch is empty.
-        """
-
-        return self.execute_command(self.TDIGEST_MAX, key)
-
-    def tdigestQuantile(self, key, quantile):
-        """
-        Returns double value estimate of the cutoff such that a specified fraction of the data added
-        to this TDigest would be less than or equal to the cutoff.
-        """
-        params = [key, quantile]
-
-        return self.execute_command(self.TDIGEST_QUANTILE, *params)
-
-    def tdigestCdf(self, key, value):
-        """
-        Returns double fraction of all points added which are <= value.
-        """
-        params = [key, value]
-
-        return self.execute_command(self.TDIGEST_CDF, *params)
-
-    def tdigestInfo(self, key):
-        """
-        Returns Compression, Capacity, Merged Nodes, Unmerged Nodes, Merged Weight, Unmerged Weight
-        and Total Compressions.
-        """
-
-        return self.execute_command(self.TDIGEST_INFO, key)
 
     def pipeline(self, transaction=True, shard_hint=None):
         """

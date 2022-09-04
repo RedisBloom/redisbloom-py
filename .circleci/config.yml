@@ -50,7 +50,8 @@ commands:
       - run:
           name: install tox dependencies
           command: |
-            pip install --user --upgrade pip virtualenv
+            sudo pip uninstall -y poetry virtualenv
+            pip install --user --upgrade pip virtualenv poetry
             pip install --user --quiet -r .circleci/circle_requirements.txt
 
       - run:
@@ -58,6 +59,7 @@ commands:
           command: |
             # https://github.com/python-poetry/poetry/issues/4210
             poetry config experimental.new-installer false
+            poetry config virtualenvs.create false
             poetry build
 
       - run:
@@ -83,7 +85,7 @@ jobs:
         default: "latest"
     docker:
       - image: circleci/python:<<parameters.python_version>>
-      - image: redislabs/rebloom:edge
+      - image: redislabs/redismod:edge
     steps:
       - build_and_test
 

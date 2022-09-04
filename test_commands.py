@@ -34,7 +34,6 @@ class TestRedisBloom(TestCase):
         self.assertTrue(rb.cmsInitByDim('cmsDim', 100, 5))
         self.assertTrue(rb.cmsInitByProb('cmsProb', 0.01, 0.01))
         self.assertTrue(rb.topkReserve('topk', 5, 100, 5, 0.9))
-        self.assertTrue(rb.tdigestCreate('tDigest', 100))
 
     ################### Test Bloom Filter ###################
     def testBFAdd(self):
@@ -207,64 +206,6 @@ class TestRedisBloom(TestCase):
         self.assertEqual(50, info.width)
         self.assertEqual(3, info.depth)
         self.assertAlmostEqual(0.9, float(info.decay))
-
-    ################### Test T-Digest ###################
-    def testTDigestReset(self):
-        self.assertTrue(rb.tdigestCreate('tDigest', 10))
-        # reset on empty histogram
-        self.assertTrue(rb.tdigestReset('tDigest'))
-        # insert data-points into sketch
-        self.assertTrue(rb.tdigestAdd('tDigest', list(range(10)), [1.0] * 10))
-
-        self.assertTrue(rb.tdigestReset('tDigest'))
-        # assert we have 0 unmerged nodes
-        self.assertEqual(0, rb.tdigestInfo('tDigest').unmergedNodes)
-
-    def testTDigestMerge(self):
-        self.assertTrue(rb.tdigestCreate('to-tDigest', 10))
-        self.assertTrue(rb.tdigestCreate('from-tDigest', 10))
-        # insert data-points into sketch
-        self.assertTrue(rb.tdigestAdd('from-tDigest', [1.0] * 10, [1.0] * 10))
-        self.assertTrue(rb.tdigestAdd('to-tDigest', [2.0] * 10, [10.0] * 10))
-        # merge from-tdigest into to-tdigest
-        self.assertTrue(rb.tdigestMerge('to-tDigest', 'from-tDigest'))
-        # we should now have 110 weight on to-histogram
-        info = rb.tdigestInfo('to-tDigest')
-        total_weight_to = float(info.mergedWeight) + float(info.unmergedWeight)
-        self.assertEqual(110, total_weight_to)
-
-    def testTDigestMinMax(self):
-        self.assertTrue(rb.tdigestCreate('tDigest', 100))
-        # insert data-points into sketch
-        self.assertTrue(rb.tdigestAdd('tDigest', [1, 2, 3], [1.0] * 3))
-        # min/max
-        self.assertEqual(3, float(rb.tdigestMax('tDigest')))
-        self.assertEqual(1, float(rb.tdigestMin('tDigest')))
-
-    def testTDigestQuantile(self):
-        self.assertTrue(rb.tdigestCreate('tDigest', 500))
-        # insert data-points into sketch
-        self.assertTrue(rb.tdigestAdd('tDigest', list([x * 0.01 for x in range(1, 10000)]), [1.0] * 10000))
-        # assert min min/max have same result as quantile 0 and 1
-        self.assertEqual(
-            float(rb.tdigestMax('tDigest')),
-            float(rb.tdigestQuantile('tDigest', 1.0)),
-        )
-        self.assertEqual(
-            float(rb.tdigestMin('tDigest')),
-            float(rb.tdigestQuantile('tDigest', 0.0)),
-        )
-
-        self.assertAlmostEqual(1.0, float(rb.tdigestQuantile('tDigest', 0.01)), 2)
-        self.assertAlmostEqual(99.0, float(rb.tdigestQuantile('tDigest', 0.99)), 2)
-
-    def testTDigestCdf(self):
-        self.assertTrue(rb.tdigestCreate('tDigest', 100))
-        # insert data-points into sketch
-        self.assertTrue(rb.tdigestAdd('tDigest', list(range(1, 10)), [1.0] * 10))
-
-        self.assertAlmostEqual(0.1, float(rb.tdigestCdf('tDigest', 1.0)), 1)
-        self.assertAlmostEqual(0.9, float(rb.tdigestCdf('tDigest', 9.0)), 1)
 
     def test_pipeline(self):
         pipeline = rb.pipeline()
