@@ -3,7 +3,6 @@
 [![GitHub issues](https://img.shields.io/github/release/RedisBloom/redisbloom-py.svg)](https://github.com/RedisBloom/redisbloom-py/releases/latest)
 [![Codecov](https://codecov.io/gh/RedisBloom/redisbloom-py/branch/master/graph/badge.svg)](https://codecov.io/gh/RedisBloom/redisbloom-py)
 [![Known Vulnerabilities](https://snyk.io/test/github/RedisBloom/redisbloom-py/badge.svg?targetFile=pyproject.toml)](https://snyk.io/test/github/RedisBloom/redisbloom-py?targetFile=pyproject.toml)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/RedisBloom/redisbloom-py.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisBloom/redisbloom-py/alerts/)
 
 # Python client for RedisBloom
 [![Forum](https://img.shields.io/badge/Forum-RedisBloom-blue)](https://forum.redis.com/c/modules/redisbloom)
